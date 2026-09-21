@@ -330,7 +330,7 @@ const styles = {
     width: 28,
     height: 28,
     borderRadius: "50%",
-    background: "var(--color-brand, #0d9488)",
+    background: "var(--color-brand, #0A6E4E)",
     color: "#fff",
     fontSize: 14,
     fontWeight: 700,

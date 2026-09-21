@@ -751,8 +751,8 @@ export async function exportToPowerPoint({ planText, selectedVP, story, swotData
   const pres = new PptxGenJS();
   pres.layout = "LAYOUT_WIDE";
 
-  const BRAND_COLOR = "0F6E56";
-  const LIGHT_BG = "F5FAF8";
+  const BRAND_COLOR = "0A6E4E";
+  const LIGHT_BG = "EDF4F0";
   const DARK_TEXT = "1A1A1A";
   const sections = parsePlanSections(planText);
   const normalizedPlanText = normalizePlanText(planText || "");

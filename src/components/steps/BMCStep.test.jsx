@@ -61,8 +61,21 @@ describe("BMCStep", () => {
     expect(container.querySelector(".bmc-pillar--hero")).toBeInTheDocument();
     expect(container.querySelectorAll(".bmc-pillar")).toHaveLength(5);
     expect(container.querySelectorAll(".bmc-block")).toHaveLength(11);
-    expect(container.querySelector(".bmc-footer")).toBeInTheDocument();
     expect(container.querySelector(".bmc-grid")).not.toBeInTheDocument();
+  });
+
+  it("states the BMC definition in the open rather than behind a tooltip", () => {
+    const { container } = render(<BMCStep data={llmData} />);
+    const definition = container.querySelector(".bmc-definition");
+    expect(definition).toBeInTheDocument();
+    expect(definition.textContent).toMatch(/11-block template/i);
+    // The old "Five-pillar business model · SDG-adapted" chip is gone.
+    expect(container.querySelector(".bmc-footer")).not.toBeInTheDocument();
+  });
+
+  it("does not label pillars with eyebrow headings", () => {
+    const { container } = render(<BMCStep data={llmData} />);
+    expect(container.querySelector(".bmc-pillar__eyebrow")).not.toBeInTheDocument();
   });
 
   it("does not render duplicate RefinementInvitation", () => {

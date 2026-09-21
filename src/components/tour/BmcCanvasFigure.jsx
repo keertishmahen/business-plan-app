@@ -35,7 +35,7 @@ export default function BmcCanvasFigure() {
     <div className="bmc-figure" role="img" aria-label="Expanded Business Model Canvas with 11 blocks">
       {hero && (
         <div className="bmc-figure__hero">
-          <p className="bmc-figure__eyebrow">{hero.eyebrow}</p>
+          <p className="bmc-figure__eyebrow">{hero.label}</p>
           {hero.blocks.map((id) => (
             <BlockCell key={id} blockId={id} />
           ))}
@@ -48,7 +48,7 @@ export default function BmcCanvasFigure() {
             if (!pillar) return null;
             return (
               <div key={pillar.id} className="bmc-figure__pillar">
-                <p className="bmc-figure__eyebrow">{pillar.eyebrow}</p>
+                <p className="bmc-figure__eyebrow">{pillar.label}</p>
                 <div className="bmc-figure__cells">
                   {pillar.blocks.map((id) => (
                     <BlockCell key={id} blockId={id} />

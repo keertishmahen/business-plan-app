@@ -137,32 +137,27 @@ export const BMC_PILLARS = [
   {
     id: "value",
     label: "Core Value",
-    eyebrow: "Core Value",
     blocks: ["valuePropositions"],
     variant: "hero",
   },
   {
     id: "customers",
     label: "Customers",
-    eyebrow: "Who & How",
     blocks: ["customerSegments", "customerRelationships", "channels"],
   },
   {
     id: "operations",
     label: "Operations",
-    eyebrow: "How We Deliver",
     blocks: ["keyPartners", "keyActivities", "keyResources"],
   },
   {
     id: "economics",
     label: "Economics",
-    eyebrow: "Money",
     blocks: ["costStructure", "revenueStreams"],
   },
   {
     id: "impact",
     label: "Impact",
-    eyebrow: "SDG Alignment",
     blocks: ["socialEnvironmentalCost", "socialEnvironmentalBenefit"],
   },
 ];

@@ -10,36 +10,42 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  /* Brand conduit: electric indigo → azure → cyan */
-  --color-brand:          #2E5CFF;
-  --color-brand-mid:      #4C7DFF;
-  --color-brand-bright:   #6EA8FF;
-  --color-brand-cyan:     #2BC8E8;
-  --color-brand-light:    #E7EEFF;
-  --color-brand-pale:     #C9D8FF;
-  --color-accent:         #7A5CFA;          /* violet — agent/AI identity, used sparingly */
-  --color-accent-light:   #EFEAFE;
-  --color-brand-rgb:      46, 92, 255;
+  /* This app is designed light-only. Declaring the scheme stops Chrome/Android
+     "force dark" from auto-inverting text to white while leaving our light
+     surfaces pale — which made generated output unreadable (capstone feedback #3). */
+  color-scheme: light;
+
+  /* Brand conduit: deep pine → emerald → teal (sustainable green) */
+  --color-brand:          #0A6E4E;
+  --color-brand-mid:      #0F8B63;
+  --color-brand-bright:   #2FB283;
+  --color-brand-cyan:     #0FB5CE;
+  --color-brand-light:    #E4F4EE;
+  --color-brand-pale:     #BCE3D4;
+  --color-accent:         #6D5EF3;          /* violet — agent/AI identity, used sparingly */
+  --color-accent-light:   #EDEAFE;
+  --color-brand-rgb:      10, 110, 78;
 
   /* Driver trio (People · Planet · Prosperity) — semantic, unchanged hues */
   --color-people:         #2360C9;
   --color-people-light:   #E8F0FD;
-  --color-planet:         #0E8A66;
-  --color-planet-light:   #DFF5EC;
+  /* Planet is a warmer leaf green so it stays distinct from the emerald brand chrome */
+  --color-planet:         #357A26;
+  --color-planet-light:   #E6F4DF;
   --color-prosperity:     #9A5B06;
   --color-prosperity-light: #FBEFDB;
 
   /* Canvas & surfaces — aligned with glass ladder */
-  --color-bg:             #EEF2F9;
+  --color-bg:             #EDF4F0;
   --color-surface:        var(--glass-bg);
   --color-surface-raised: var(--glass-bg-elevated);
-  --color-border:         rgba(23, 32, 63, 0.08);
-  --color-border-mid:     rgba(23, 32, 63, 0.16);
+  --color-border:         rgba(12, 40, 30, 0.09);
+  --color-border-mid:     rgba(12, 40, 30, 0.17);
 
   /* Ink */
-  --color-text-primary:   #0B1220;
-  --color-text-secondary: #3E4A61;
-  --color-text-muted:     #6B7690;
+  --color-text-primary:   #0B1712;
+  --color-text-secondary: #3D4F48;
+  --color-text-muted:     #68786F;
 
   /* Status */
   --color-danger:         #D92D20;
@@ -56,9 +62,9 @@
   --radius-xl:  28px;
   --radius-pill: 999px;
 
-  --shadow-sm: 0 1px 2px rgba(16, 26, 60, 0.04), 0 3px 10px rgba(16, 26, 60, 0.05);
-  --shadow-md: 0 2px 6px rgba(16, 26, 60, 0.05), 0 12px 32px rgba(16, 26, 60, 0.09);
-  --shadow-lg: 0 16px 48px rgba(16, 26, 60, 0.15);
+  --shadow-sm: 0 1px 2px rgba(10, 42, 30, 0.04), 0 3px 10px rgba(10, 42, 30, 0.05);
+  --shadow-md: 0 2px 6px rgba(10, 42, 30, 0.05), 0 12px 32px rgba(10, 42, 30, 0.09);
+  --shadow-lg: 0 16px 48px rgba(10, 42, 30, 0.15);
 
   /* Type */
   --font-display: 'Sora', 'Inter', system-ui, sans-serif;
@@ -100,20 +106,20 @@
                  inset -1px -1px 2px 0 rgba(255, 255, 255, 0.25);
 
   /* Conduit + canvas gradients */
-  --gradient-brand: linear-gradient(120deg, #2E5CFF 0%, #4C7DFF 55%, #2BC8E8 100%);
-  --gradient-conduit: linear-gradient(90deg, #2E5CFF 0%, #2BC8E8 60%, #7A5CFA 130%);
-  --gradient-surface: linear-gradient(180deg, rgba(255,255,255,0.94) 0%, rgba(238,242,249,0.94) 100%);
+  --gradient-brand: linear-gradient(120deg, #0A6E4E 0%, #0F8B63 55%, #0FB5CE 100%);
+  --gradient-conduit: linear-gradient(90deg, #0A6E4E 0%, #0FB5CE 60%, #6D5EF3 130%);
+  --gradient-surface: linear-gradient(180deg, rgba(255,255,255,0.94) 0%, rgba(237,244,240,0.94) 100%);
   --gradient-mesh:
-    radial-gradient(56% 46% at 10% 0%,  rgba(76, 125, 255, 0.22) 0%, transparent 66%),
-    radial-gradient(48% 42% at 92% 4%,  rgba(43, 200, 232, 0.19) 0%, transparent 64%),
-    radial-gradient(44% 48% at 82% 88%, rgba(122, 92, 250, 0.15) 0%, transparent 62%),
-    radial-gradient(46% 42% at 4% 92%,  rgba(255, 122, 186, 0.1) 0%, transparent 60%);
+    radial-gradient(56% 46% at 10% 0%,  rgba(15, 139, 99, 0.20) 0%, transparent 66%),
+    radial-gradient(48% 42% at 92% 4%,  rgba(15, 181, 206, 0.17) 0%, transparent 64%),
+    radial-gradient(44% 48% at 82% 88%, rgba(109, 94, 243, 0.13) 0%, transparent 62%),
+    radial-gradient(46% 42% at 4% 92%,  rgba(122, 190, 90, 0.11) 0%, transparent 60%);
 
   /* Elevated shadows — face/glow layers */
-  --shadow-glass: var(--glass-highlight), var(--glass-edge), 0 12px 40px rgba(16, 26, 60, 0.09);
-  --shadow-elevated: 0 28px 72px rgba(16, 26, 60, 0.14), 0 4px 14px rgba(16, 26, 60, 0.05);
-  --shadow-glow: 0 0 0 1px rgba(46, 92, 255, 0.28), 0 0 36px rgba(46, 92, 255, 0.24);
-  --shadow-glass-panel: var(--glass-highlight), var(--glass-edge), 0 14px 44px rgba(16, 26, 60, 0.1);
+  --shadow-glass: var(--glass-highlight), var(--glass-edge), 0 12px 40px rgba(10, 42, 30, 0.09);
+  --shadow-elevated: 0 28px 72px rgba(10, 42, 30, 0.14), 0 4px 14px rgba(10, 42, 30, 0.05);
+  --shadow-glow: 0 0 0 1px rgba(10, 110, 78, 0.30), 0 0 36px rgba(10, 110, 78, 0.24);
+  --shadow-glass-panel: var(--glass-highlight), var(--glass-edge), 0 14px 44px rgba(10, 42, 30, 0.1);
 }
 
 /* Utility: liquid glass panel surface */
@@ -1541,6 +1547,22 @@ textarea:focus:not(:focus-visible),
   white-space: nowrap;
 }
 
+/* Stable tension identifier (T1, T2 …) shown in the matrix, the flagged list
+   and the detail panel so a tension can be tracked across all three views. */
+.tension-number {
+  display: inline-block;
+  margin-right: 6px;
+  padding: 1px 6px;
+  border-radius: var(--radius-pill);
+  background: var(--color-brand-light);
+  color: var(--color-brand);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  vertical-align: 1px;
+}
+
 .tensions-list-card__excerpt {
   font-size: 13px;
   color: var(--color-text-secondary);
@@ -1550,6 +1572,14 @@ textarea:focus:not(:focus-visible),
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+/* Selected card shows the whole explanation rather than two clamped lines. */
+.tensions-list-card__excerpt--full {
+  display: block;
+  -webkit-line-clamp: none;
+  overflow: visible;
+  margin-bottom: 4px;
 }
 
 .tensions-list-card__meta {

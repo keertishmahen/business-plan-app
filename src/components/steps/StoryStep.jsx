@@ -6,8 +6,10 @@ const EXAMPLES = [
   "Our startup makes biodegradable packaging from agricultural waste. We sell to food brands trying to reduce plastic use. We're post-MVP and looking to scale across Europe.",
 ];
 
-export default function StoryStep({ onSubmit }) {
-  const [text, setText] = useState("");
+export default function StoryStep({ onSubmit, initialText = "" }) {
+  // Seed from the story already in workflow state so navigating back to step 1
+  // shows what was written instead of an empty box (feedback p30, item 3).
+  const [text, setText] = useState(initialText);
   const [exampleIdx, setExampleIdx] = useState(null);
 
   function selectExample(idx) {

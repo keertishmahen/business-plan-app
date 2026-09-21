@@ -964,7 +964,7 @@ export default function App() {
   const workflowContent = (
     <>
       {state.currentStep === "story" && (
-        <StoryStep onSubmit={handleStorySubmit} />
+        <StoryStep onSubmit={handleStorySubmit} initialText={state.story} />
       )}
 
       {state.currentStep !== "story" && (

@@ -233,10 +233,13 @@ function MatrixChip({ tension, index, isSelected, onSelect }) {
       type="button"
       onClick={() => onSelect(index)}
       className={`tensions-chip${isSelected ? " tensions-chip--selected" : ""}${tension.resolved ? " tensions-chip--resolved" : ""}`}
-      aria-label={`${tension.shortLabel}. Evidence: ${tension.evidenceLevel}.${tension.resolved ? " Resolved." : ""}`}
+      aria-label={`Tension ${index + 1}. ${tension.shortLabel}. Evidence: ${tension.evidenceLevel}.${tension.resolved ? " Resolved." : ""}`}
       aria-pressed={isSelected}
     >
-      <span className="tensions-chip__label">{tension.shortLabel}</span>
+      <span className="tensions-chip__label">
+        <span className="tension-number">T{index + 1}</span>
+        {tension.shortLabel}
+      </span>
       <span className="tensions-chip__badges">
         <EvidenceBadge level={tension.evidenceLevel} />
       </span>
@@ -253,10 +256,21 @@ function TensionListCard({ tension, index, isSelected, onSelect }) {
       aria-pressed={isSelected}
     >
       <div className="tensions-list-card__header">
-        <span className="tensions-list-card__title">{tension.title}</span>
+        <span className="tensions-list-card__title">
+          <span className="tension-number">T{index + 1}</span>
+          {tension.title}
+        </span>
         {tension.resolved && <span className="tensions-list-card__resolved">✓ Resolved</span>}
       </div>
-      <p className="tensions-list-card__excerpt">{tension.excerpt}</p>
+      {/* Expand in place when selected — the truncated excerpt alone meant the
+          full explanation was unreachable from this list (feedback p13). */}
+      <p
+        className={`tensions-list-card__excerpt${
+          isSelected ? " tensions-list-card__excerpt--full" : ""
+        }`}
+      >
+        {isSelected ? tension.description || tension.excerpt : tension.excerpt}
+      </p>
       <div className="tensions-list-card__meta">
         {tension.driverA && <DriverBadge driver={tension.driverA} />}
         {tension.driverB && tension.driverB !== tension.driverA && (
@@ -278,7 +292,7 @@ function TensionDetail({ tension, index, onResolve }) {
   return (
     <div className="tensions-detail">
       <div className="tensions-detail__body">
-        <div className="tensions-detail__label">Selected tension</div>
+        <div className="tensions-detail__label">Selected tension · T{index + 1}</div>
 
         <div className="tensions-detail__badges">
           {tension.driverA && <DriverBadge driver={tension.driverA} />}
@@ -294,11 +308,14 @@ function TensionDetail({ tension, index, onResolve }) {
         <h3 className="tensions-detail__title">{tension.title}</h3>
         <p className="tensions-detail__description">{tension.description}</p>
 
-        {tension.inferenceLevel && (
-          <div className="tensions-detail__inference">
-            Inference confidence: <strong>{tension.inferenceLevel}</strong>
-          </div>
-        )}
+        {/* One confidence concept only. This panel used to show a separate
+            "Inference confidence" from the LLM's `inference_level` field, which
+            contradicted the evidence badge in the matrix (feedback p32 — a cell
+            marked Medium read "Inference confidence: High"). The badge above is
+            now the single source of truth; this line explains what it means. */}
+        <div className="tensions-detail__inference">
+          {EVIDENCE_MEANING[tension.evidenceLevel] || EVIDENCE_MEANING.Low}
+        </div>
 
         {sources.length > 0 && (
           <div className="tensions-detail__sources">
@@ -388,6 +405,15 @@ function normalizeTension(t, idx) {
     inferenceLevel: t.inference_level || t.inferenceLevel || null,
   };
 }
+
+/** Plain-language meaning of each evidence level, shown under the selected tension. */
+const EVIDENCE_MEANING = {
+  High: "High evidence — drawn directly from what you described or from cited sources.",
+  Medium: "Medium evidence — partly grounded in your story, partly inferred from sector patterns.",
+  Inferred: "Inferred — a plausible tension the agents expect in your sector. Worth checking against your own knowledge.",
+  Inference: "Inferred — a plausible tension the agents expect in your sector. Worth checking against your own knowledge.",
+  Low: "Low evidence — inferred from sector patterns rather than your story. Review before relying on it.",
+};
 
 function isHighEvidence(level) {
   const l = String(level || "").toLowerCase();

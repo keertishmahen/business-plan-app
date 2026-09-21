@@ -19,7 +19,7 @@ export default function RefinementInvitation({ onClickRefine, ariaLabel = 'Refin
         padding: '8px 14px',
         fontSize: 13,
         fontWeight: 500,
-        color: 'var(--color-brand-mid, #4C7DFF)',
+        color: 'var(--color-brand-mid, #0F8B63)',
         background: 'var(--color-brand-light, var(--color-brand-light))',
         border: '1.5px solid var(--color-brand-pale, var(--color-brand-pale))',
         borderRadius: 'var(--radius-md, 10px)',
@@ -27,8 +27,8 @@ export default function RefinementInvitation({ onClickRefine, ariaLabel = 'Refin
         transition: 'background 0.15s ease, border-color 0.15s ease, transform 0.15s ease',
       }}
       onMouseEnter={e => {
-        e.currentTarget.style.background = 'var(--color-brand-pale, #C9D8FF)';
-        e.currentTarget.style.borderColor = 'var(--color-brand-mid, #4C7DFF)';
+        e.currentTarget.style.background = 'var(--color-brand-pale, #BCE3D4)';
+        e.currentTarget.style.borderColor = 'var(--color-brand-mid, #0F8B63)';
         e.currentTarget.style.transform = 'translateY(-1px)';
       }}
       onMouseLeave={e => {

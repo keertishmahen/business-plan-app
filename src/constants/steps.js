@@ -138,9 +138,10 @@ export const DRIVER_STYLES = {
     border: "#B5D4F4",
   },
   Planet: {
-    color: "#0B7A5C",
-    light: "#DDF6EE",
-    border: "#A7ECD6",
+    // Warmer leaf green — kept distinct from the emerald brand chrome
+    color: "#357A26",
+    light: "#E6F4DF",
+    border: "#B9E3A4",
   },
   Prosperity: {
     color: "#854F0B",

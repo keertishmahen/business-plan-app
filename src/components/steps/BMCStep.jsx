@@ -1,5 +1,4 @@
 import { useState, useMemo, useEffect } from "react";
-import InfoTooltip from "../shared/InfoTooltip";
 import { TOOLTIP_CONTENT } from "../../constants/tooltips";
 import { BMC_BLOCKS, BMC_PILLARS, BMC_PILLAR_ROWS } from "../../constants/bmcBlocks";
 import { normalizeBlocks } from "../../utils/bmcFormat";
@@ -185,7 +184,9 @@ function BMCPillar({ pillar, renderBlock }) {
       className={`bmc-pillar bmc-pillar--${pillar.id}${isHero ? " bmc-pillar--hero" : ""}`}
       aria-label={`${pillar.label} pillar`}
     >
-      <div className="bmc-pillar__eyebrow">{pillar.eyebrow}</div>
+      {/* Pillar eyebrow labels ("Core Value" / "Who & How" / "How We Deliver")
+          were removed: they were not part of the BMC and read as incorrect
+          headings over the blocks (feedback p33, item 2). */}
       <div className="bmc-pillar__sections">
         {pillar.blocks.map((blockId) => (
           <div key={blockId} className={`bmc-section bmc-section--${blockId}`}>
@@ -282,16 +283,10 @@ export default function BMCStep({ data, onEdit }) {
         ))}
       </div>
 
-      <div className="bmc-footer">
-        <span className="bmc-footer__text">
-          Five-pillar business model · SDG-adapted
-        </span>
-        <InfoTooltip
-          content={TOOLTIP_CONTENT["bmc"]}
-          ariaLabel="Info about Business Model Canvas"
-          position="right"
-        />
-      </div>
+      {/* The definition used to sit behind an (i) tooltip, so it was effectively
+          hidden (feedback p33, item 1). It is now stated plainly, and the
+          "Five-pillar business model" chip is gone. */}
+      <p className="bmc-definition">{TOOLTIP_CONTENT["bmc"]}</p>
     </div>
   );
 }

@@ -1773,26 +1773,19 @@
 
 .bmc-block--impact-benefit {
   --bmc-accent: var(--color-planet);
-  --bmc-text: #0E8A66;
+  --bmc-text: var(--color-planet);
 }
 
-.bmc-footer {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  margin-top: 16px;
-  margin-bottom: 8px;
-  padding: 10px 14px;
-  border-radius: var(--radius-pill);
-  background: rgba(255, 255, 255, 0.45);
-  border: 1px solid rgba(255, 255, 255, 0.75);
-}
-
-.bmc-footer__text {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  color: var(--color-text-muted);
-  letter-spacing: 0.02em;
+/* Plain-language BMC definition, previously hidden behind an (i) tooltip. */
+.bmc-definition {
+  margin: 16px 0 8px;
+  padding: 12px 16px;
+  border-radius: var(--radius-md);
+  border-left: 3px solid var(--color-brand);
+  background: var(--color-brand-light);
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--color-text-secondary);
 }
 
 @media (max-width: 900px) {

@@ -30,8 +30,9 @@ export const AGENT_CONFIG = {
     label: "SDG Alignment",
     subtitle: "UN SDG mapping",
     Icon: Globe,
-    color: "#0E8A66",
-    bg: "rgba(14, 138, 102, 0.08)",
+    // Matches the Planet driver leaf green; distinct from the emerald brand chrome
+    color: "#357A26",
+    bg: "rgba(53, 122, 38, 0.08)",
   },
   critique: {
     id: "critique",

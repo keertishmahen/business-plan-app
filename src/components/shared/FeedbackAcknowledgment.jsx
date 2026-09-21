@@ -38,7 +38,7 @@ export default function FeedbackAcknowledgment({ message, onDismiss }) {
           width: 24,
           height: 24,
           borderRadius: "50%",
-          background: "var(--color-brand-mid, #4C7DFF)",
+          background: "var(--color-brand-mid, #0F8B63)",
           color: "#fff",
           fontSize: 14,
           fontWeight: 700,
