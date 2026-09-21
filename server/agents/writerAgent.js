@@ -11,7 +11,8 @@ const SYSTEM_PROMPT = `You are an expert business plan writer. Generate detailed
 
 Guidelines:
 - Use concrete numbers, specific market references, and actionable strategies
-- Match the tone to a professional business document
+- If the prompt contains an explicit "TONE:" instruction, follow it exactly; it
+  overrides any default register. Otherwise write as a professional business document.
 - Organize output with clear headings and structured sections
 - Draw directly from the grounding knowledge provided
 - Maintain consistency with any previously generated content for this user`;

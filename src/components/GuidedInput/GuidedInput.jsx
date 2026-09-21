@@ -129,9 +129,19 @@ export default function GuidedInput({ onComplete, onBack }) {
           ← Back
         </button>
 
-        <button type="button" className="btn-ghost" onClick={handleContinue} aria-label="Skip this step">
-          Skip this step
-        </button>
+        {/* Your story is mandatory — only the follow-up questions are optional
+            (feedback p30, item 2). This used to read "Skip this step" and was
+            offered before anything had been entered. */}
+        {canContinue && !isLastBaseQuestion && (
+          <button
+            type="button"
+            className="btn-ghost"
+            onClick={handleContinue}
+            aria-label="Skip the remaining follow-up questions"
+          >
+            Skip remaining questions
+          </button>
+        )}
 
         <button
           type="button"

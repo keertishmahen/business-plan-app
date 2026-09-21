@@ -9,6 +9,7 @@ import SpecialistInsightsPanel from "./SpecialistInsightsPanel";
 import AgentProgressIndicator from "../shared/AgentProgressIndicator";
 import { APP_NAME, APP_TAGLINE } from "../../constants/branding";
 import { getActiveAgents } from "../../constants/agents";
+import { TONES, getTone } from "../../constants/tone";
 
 /**
  * MIA Dashboard — Central hub layout for the multi-agent workflow.
@@ -25,6 +26,8 @@ export default memo(function MIADashboard({
   loading,
   stepMeta,
   stepIdx,
+  tone,
+  onToneChange,
 }) {
   const {
     agentStatuses = {},
@@ -57,6 +60,24 @@ export default memo(function MIADashboard({
           </div>
 
           <div className="glass-header__actions">
+            {onToneChange && (
+              <label className="header-tone">
+                <span className="header-tone__label">Tone</span>
+                <select
+                  className="header-tone__select"
+                  value={tone}
+                  onChange={(e) => onToneChange(e.target.value)}
+                  title={getTone(tone).hint}
+                  aria-label="Writing tone for generated content"
+                >
+                  {TONES.map((t) => (
+                    <option key={t.id} value={t.id}>
+                      {t.label}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            )}
             {onSDGMapperOpen && (
               <button type="button" onClick={onSDGMapperOpen} className="header-pill-btn">
                 <Map size={14} />

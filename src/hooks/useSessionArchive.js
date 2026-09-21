@@ -103,7 +103,7 @@ export function deleteArchive(id) {
 /**
  * Restore a persistable snapshot into the workflow reducer (same shape as resume).
  */
-export function restorePersistableState(saved, { dispatch, setSelectedSwotTitle, setTourCompleted }) {
+export function restorePersistableState(saved, { dispatch, setSelectedSwotTitle, setTourCompleted, setTone }) {
   if (!saved || !dispatch) return null;
 
   if (saved.phase) dispatch({ type: "SET_PHASE", payload: saved.phase });
@@ -128,6 +128,10 @@ export function restorePersistableState(saved, { dispatch, setSelectedSwotTitle,
 
   if (saved.tourCompleted) {
     setTourCompleted?.(true);
+  }
+
+  if (saved.tone) {
+    setTone?.(saved.tone);
   }
 
   const phase = saved.phase || "onboarding";

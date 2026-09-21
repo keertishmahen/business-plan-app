@@ -119,11 +119,74 @@ export default function SwotStep({
   const userOverrode =
     selectedTitle && recommendedTitle && selectedTitle !== recommendedTitle;
 
+  // Rendered below the selected value proposition's editable SWOT, not above it
+  // (feedback p34, item 2: show the choice and its SWOT first, then compare).
+  const comparisonSection = swotEntries.length > 1 && (
+    <div className="swot-compare-wrap">
+      <h4 className="swot-compare-wrap__title">All value propositions compared</h4>
+      <div
+        className="swot-compare-grid"
+        role="table"
+        aria-label="SWOT comparison across value propositions"
+        style={{ "--swot-cols": swotEntries.length }}
+      >
+        <div className="swot-compare-row swot-compare-row--header" role="row">
+          <div className="swot-compare-row-label" role="columnheader" />
+          {swotEntries.map((entry, i) => (
+            <div
+              key={entry.title || i}
+              className={`swot-compare-col${entry.title === recommendedTitle ? " swot-compare-col--recommended" : ""}`}
+              role="columnheader"
+            >
+              {entry.title}
+              {entry.title === recommendedTitle && (
+                <span className="swot-compare-col__badge">Recommended</span>
+              )}
+            </div>
+          ))}
+        </div>
+
+        {QUADRANT_KEYS.map((k) => {
+          const cfg = SWOT_CONFIG[k];
+          const { Icon } = cfg;
+          return (
+            <div key={k} className="swot-compare-row" role="row">
+              <div className="swot-compare-row-label" role="rowheader">
+                <span
+                  className="swot-compare-row-label__icon"
+                  style={{ background: `${cfg.border}33`, color: cfg.text }}
+                  aria-hidden="true"
+                >
+                  <Icon size={14} strokeWidth={2} />
+                </span>
+                {cfg.label}
+              </div>
+              {swotEntries.map((entry, i) => (
+                <div
+                  key={`${entry.title}-${k}-${i}`}
+                  className="swot-compare-cell"
+                  role="cell"
+                  style={{ borderLeftColor: cfg.border }}
+                >
+                  <ul className="swot-compare-list">
+                    {(entry[k] || []).map((item, j) => (
+                      <li key={j}>{item}</li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+
   return (
     <div className="animate-fade-in">
       <div className="swot-step__intro">
         <p className="swot-step__subtitle">
-          Compare all value propositions, review the recommendation, then choose your path forward
+          Review the recommendation, choose your value proposition and refine its SWOT — then compare it against the alternatives below
           <InfoTooltip
             content={TOOLTIP_CONTENT["step-swot"]}
             ariaLabel="Info about SWOT Analysis"
@@ -140,66 +203,6 @@ export default function SwotStep({
           </div>
           <div className="swot-recommendation__title">{recommendedTitle}</div>
           <p className="swot-recommendation__rationale">{recommendationRationale}</p>
-        </div>
-      )}
-
-      {swotEntries.length > 1 && (
-        <div className="swot-compare-wrap">
-          <div
-            className="swot-compare-grid"
-            role="table"
-            aria-label="SWOT comparison across value propositions"
-            style={{ "--swot-cols": swotEntries.length }}
-          >
-            <div className="swot-compare-row swot-compare-row--header" role="row">
-              <div className="swot-compare-row-label" role="columnheader" />
-              {swotEntries.map((entry, i) => (
-                <div
-                  key={entry.title || i}
-                  className={`swot-compare-col${entry.title === recommendedTitle ? " swot-compare-col--recommended" : ""}`}
-                  role="columnheader"
-                >
-                  {entry.title}
-                  {entry.title === recommendedTitle && (
-                    <span className="swot-compare-col__badge">Recommended</span>
-                  )}
-                </div>
-              ))}
-            </div>
-
-            {QUADRANT_KEYS.map((k) => {
-              const cfg = SWOT_CONFIG[k];
-              const { Icon } = cfg;
-              return (
-                <div key={k} className="swot-compare-row" role="row">
-                  <div className="swot-compare-row-label" role="rowheader">
-                    <span
-                      className="swot-compare-row-label__icon"
-                      style={{ background: `${cfg.border}33`, color: cfg.text }}
-                      aria-hidden="true"
-                    >
-                      <Icon size={14} strokeWidth={2} />
-                    </span>
-                    {cfg.label}
-                  </div>
-                  {swotEntries.map((entry, i) => (
-                    <div
-                      key={`${entry.title}-${k}-${i}`}
-                      className="swot-compare-cell"
-                      role="cell"
-                      style={{ borderLeftColor: cfg.border }}
-                    >
-                      <ul className="swot-compare-list">
-                        {(entry[k] || []).map((item, j) => (
-                          <li key={j}>{item}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  ))}
-                </div>
-              );
-            })}
-          </div>
         </div>
       )}
 
@@ -356,6 +359,8 @@ export default function SwotStep({
           </div>
         </div>
       )}
+
+      {comparisonSection}
     </div>
   );
 }

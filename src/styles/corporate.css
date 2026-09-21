@@ -328,6 +328,45 @@
   line-height: 1.45;
 }
 
+/* Output tone / register selector in the workflow header. */
+.header-tone {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 8px 5px 12px;
+  border-radius: var(--radius-pill);
+  background: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(12px) saturate(1.5);
+  -webkit-backdrop-filter: blur(12px) saturate(1.5);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.85);
+}
+
+.header-tone__label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.header-tone__select {
+  border: none;
+  background: transparent;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  padding: 2px 4px;
+  border-radius: var(--radius-sm);
+}
+
+.header-tone__select:focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 1px;
+}
+
 .header-pill-btn {
   display: inline-flex;
   align-items: center;
@@ -1393,8 +1432,19 @@
 
 .swot-compare-wrap {
   overflow-x: auto;
+  margin-top: 28px;
   margin-bottom: 24px;
   -webkit-overflow-scrolling: touch;
+  border-top: 1px solid var(--color-border);
+  padding-top: 20px;
+}
+
+.swot-compare-wrap__title {
+  margin: 0 0 12px;
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-text-primary);
 }
 
 .swot-compare-grid {

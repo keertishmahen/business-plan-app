@@ -28,6 +28,7 @@ import { normalizeDilemmasOutput } from "./utils/dilemmaScore";
 import { normalizeBmcOutput, hasBmcContent } from "./utils/bmcFormat";
 import { resolveSpecialistStatus, isSpecialistAgent, shouldLogSpecialistStageEvent, buildSpecialistActivityEvent, buildMiaFinalization } from "./utils/agentStatus";
 import { PROMPTS }      from "./constants/prompts";
+import { applyTone, DEFAULT_TONE } from "./constants/tone";
 import { callGemini, parseGeminiJSON, setApiKey } from "./utils/gemini";
 import { callRAG, storeStepOutput, callMultiAgentStream, shouldUseMultiAgent, isRAGAvailable, isServerManaged } from "./services/geminiClient";
 import useWorkflow, { STEP_ORDER } from "./hooks/useWorkflow";
@@ -282,6 +283,8 @@ export default function App() {
 
   // Local state for things not in the workflow reducer
   const [selectedSwotTitle, setSelectedSwotTitle] = useState("");
+  // Output register for generated content (capstone feedback #1).
+  const [tone, setTone] = useState(DEFAULT_TONE);
 
   // Feedback acknowledgment message state (Task 9.3)
   const [feedbackMessage, setFeedbackMessage] = useState("");
@@ -329,6 +332,7 @@ export default function App() {
     selectedSwotTitle,
     guidedInputResponses: state.guidedInputPhases,
     tourCompleted,
+    tone,
   }), [
     state.phase,
     state.currentStep,
@@ -338,6 +342,7 @@ export default function App() {
     selectedSwotTitle,
     state.guidedInputPhases,
     tourCompleted,
+    tone,
   ]);
   const { hasSavedState, resume, clearState, flushState } = useLocalStorage("nexus-mia-state", persistableState);
 
@@ -391,6 +396,7 @@ export default function App() {
       dispatch,
       setSelectedSwotTitle,
       setTourCompleted,
+      setTone,
     });
     if (route) {
       window.history.replaceState(
@@ -494,9 +500,12 @@ export default function App() {
   }, [dispatch]);
 
   // ── Execute generation with MIA or RAG ────────────────────────
-  const executeGeneration = useCallback(async (sid, prompt) => {
+  const executeGeneration = useCallback(async (sid, rawPrompt) => {
     const useMIA = shouldUseMultiAgent(sid);
     const swotEntry = state.outputs.swot?.swot?.find((s) => s.title === selectedSwotTitle) || null;
+    // Tone is applied centrally so a single control steers all nine steps
+    // (capstone feedback #1 — output read as "posh and uptight").
+    const prompt = applyTone(rawPrompt, tone);
     const genOptions = {
       stepId: sid,
       sessionId,
@@ -505,6 +514,7 @@ export default function App() {
         temperature: 0.7,
         maxTokens: sid === "plan" ? 8192 : 4096,
         selectedVpTitle: swotEntry?.title || "",
+        tone,
       },
     };
 
@@ -535,7 +545,7 @@ export default function App() {
     }
 
     return callRAG(prompt, genOptions);
-  }, [sessionId, state.story, state.outputs.swot, selectedSwotTitle, handleAgentProgress, initMiaAgents, setAgentMetadata, resetAgentState, dispatch]);
+  }, [sessionId, state.story, state.outputs.swot, selectedSwotTitle, tone, handleAgentProgress, initMiaAgents, setAgentMetadata, resetAgentState, dispatch]);
 
   const generateSdgMapping = useCallback(async (outputsOverride) => {
     const outputs = outputsOverride || state.outputs;
@@ -1127,6 +1137,8 @@ export default function App() {
         loading={state.loading}
         stepMeta={stepMeta}
         stepIdx={stepIdx}
+        tone={tone}
+        onToneChange={setTone}
         feedbackSlot={
           showFeedbackDock ? (
             <FeedbackBar
