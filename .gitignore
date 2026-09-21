@@ -1,0 +1,16 @@
+node_modules/
+build/
+.env
+.env.local
+.DS_Store
+*.log
+server/data/
+*.zip
+deploy-staging/
+
+# Python (server_py)
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+server_py/chroma/
