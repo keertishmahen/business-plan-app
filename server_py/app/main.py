@@ -11,18 +11,39 @@ import logging
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from contextlib import asynccontextmanager
+
 from .config import CORS_ORIGIN
 from .routers import context, generate, health
+from .services.chroma_store import ensure_knowledge_seeded
 
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s %(levelname)-7s %(name)s — %(message)s",
 )
 
+log = logging.getLogger(__name__)
+
+
+@asynccontextmanager
+async def lifespan(_app: FastAPI):
+    """Make sure the knowledge base is present before serving traffic."""
+    try:
+        loaded = ensure_knowledge_seeded()
+        if loaded:
+            log.info("Knowledge base seeded from bundle: %s", loaded)
+        else:
+            log.info("Knowledge base already present")
+    except Exception as exc:  # noqa: BLE001 - never block startup on seeding
+        log.error("Knowledge seeding failed: %s", exc)
+    yield
+
+
 app = FastAPI(
     title="Symetra RAG + MIA API",
     description="SDG-aligned business model co-pilot: retrieval, agents and generation.",
     version="2.0.0",
+    lifespan=lifespan,
 )
 
 # CORS_ORIGIN may be a comma-separated list of deployed frontends.

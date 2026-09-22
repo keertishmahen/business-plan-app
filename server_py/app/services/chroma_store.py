@@ -198,3 +198,59 @@ def stats() -> dict[str, int]:
         except Exception:  # noqa: BLE001
             out[name] = -1
     return out
+
+
+def ensure_knowledge_seeded() -> dict[str, int]:
+    """Load the bundled knowledge vectors into any empty knowledge collection.
+
+    The corpus is static reference data, already embedded with the same model,
+    so it ships inside the image and loads with no API calls. This makes the
+    container self-healing: if it restarts onto an empty disk — which is the
+    case on Container Apps environments that cannot mount a file share — the
+    knowledge base rebuilds itself on startup instead of silently serving
+    ungrounded answers.
+
+    `user_context` is deliberately not seeded: it is per-session and is
+    repopulated naturally as the user works through the nine steps.
+    """
+    import json
+
+    from ..config import KNOWLEDGE_DIR
+
+    snapshot = KNOWLEDGE_DIR / "vectors_knowledge.json"
+    if not snapshot.exists():
+        log.warning("No bundled vector snapshot at %s", snapshot)
+        return {}
+
+    loaded: dict[str, int] = {}
+    try:
+        data = json.loads(snapshot.read_text(encoding="utf-8"))
+    except Exception as exc:  # noqa: BLE001
+        log.error("Could not read bundled vectors: %s", exc)
+        return {}
+
+    for name, collection in data.items():
+        try:
+            if get_collection(name).count() > 0:
+                continue
+        except Exception:  # noqa: BLE001
+            pass
+
+        docs = collection.get("documents") or []
+        ids, texts, embeddings, metadatas = [], [], [], []
+        for doc in docs:
+            if not doc.get("embedding") or not doc.get("text"):
+                continue
+            ids.append(doc["id"])
+            texts.append(doc["text"])
+            embeddings.append(doc["embedding"])
+            metadatas.append(doc.get("metadata") or {})
+
+        if ids:
+            add_documents(
+                name, ids=ids, documents=texts, embeddings=embeddings, metadatas=metadatas
+            )
+            loaded[name] = len(ids)
+            log.info("Seeded %s with %d bundled documents", name, len(ids))
+
+    return loaded
