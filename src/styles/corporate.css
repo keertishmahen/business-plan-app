@@ -328,6 +328,39 @@
   line-height: 1.45;
 }
 
+/* Retrieval provenance in the Agent Context panel. */
+.rag-sources {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--color-border);
+}
+
+.rag-sources__hint {
+  margin: 4px 0 10px;
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--color-text-muted);
+}
+
+.rag-sources__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.rag-sources__item {
+  font-size: 11px;
+  line-height: 1.45;
+  color: var(--color-text-secondary);
+  background: var(--color-brand-light);
+  border-radius: var(--radius-sm);
+  padding: 6px 9px;
+  word-break: break-word;
+}
+
 /* Output tone / register selector in the workflow header. */
 .header-tone {
   display: inline-flex;

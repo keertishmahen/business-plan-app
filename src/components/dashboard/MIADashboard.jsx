@@ -1,6 +1,10 @@
 import { memo } from "react";
 import { Sparkles, Map } from "lucide-react";
-import { formatAgentText } from "../../utils/agentText";
+import {
+  formatAgentText,
+  collectRagSourcesFromMetadata,
+  formatSourceLabel,
+} from "../../utils/agentText";
 import StepNav from "../StepNav";
 import StepGlimpsePanel from "../shared/StepGlimpsePanel";
 import AgentHub from "./AgentHub";
@@ -44,6 +48,8 @@ export default memo(function MIADashboard({
         Object.entries(lastMetadata.specialists).filter(([id]) => activeAgentIds.includes(id))
       )
     : {};
+
+  const ragSources = collectRagSourcesFromMetadata(lastMetadata);
 
   return (
     <div className="mia-dashboard">
@@ -173,6 +179,25 @@ export default memo(function MIADashboard({
               activeAgentIds={activeAgentIds}
               onClose={onToggleInsights}
             />
+          )}
+
+          {/* Retrieval provenance. The backend has always returned `sources`,
+              but nothing rendered them, so the RAG grounding was invisible to
+              reviewers (feedback p29, comment 1). */}
+          {ragSources.length > 0 && (
+            <div className="rag-sources">
+              <div className="glass-eyebrow">Sources used</div>
+              <p className="rag-sources__hint">
+                Documents retrieved to ground this step.
+              </p>
+              <ul className="rag-sources__list">
+                {ragSources.map((source) => (
+                  <li key={source} className="rag-sources__item">
+                    {formatSourceLabel(source)}
+                  </li>
+                ))}
+              </ul>
+            </div>
           )}
 
           {!Object.keys(stepSpecialists).length && !lastMetadata?.synthesisNotes && !loading && (

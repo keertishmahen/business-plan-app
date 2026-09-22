@@ -1,4 +1,66 @@
-import { formatAgentText, formatAgentTextList, sanitizeAgentMetadata } from "./agentText";
+import {
+  formatAgentText,
+  formatAgentTextList,
+  sanitizeAgentMetadata,
+  collectRagSourcesFromMetadata,
+  formatSourceLabel,
+} from "./agentText";
+
+describe("collectRagSourcesFromMetadata", () => {
+  it("returns retrieval sources from the backend", () => {
+    const sources = collectRagSourcesFromMetadata({
+      sources: ["user_context:bmc_channels", "sdg_knowledge:sdg_7"],
+    });
+    expect(sources).toEqual(["user_context:bmc_channels", "sdg_knowledge:sdg_7"]);
+  });
+
+  it("merges specialist-cited sources after retrieval sources", () => {
+    const sources = collectRagSourcesFromMetadata({
+      sources: ["business_frameworks:bmc_overview"],
+      specialists: { market: { sources: ["Industry report 2025"] } },
+    });
+    expect(sources[0]).toBe("business_frameworks:bmc_overview");
+    expect(sources).toContain("Industry report 2025");
+  });
+
+  it("de-duplicates", () => {
+    const sources = collectRagSourcesFromMetadata({
+      sources: ["sdg_knowledge:sdg_7"],
+      specialists: { sdg: { sources: ["sdg_knowledge:sdg_7"] } },
+    });
+    expect(sources).toHaveLength(1);
+  });
+
+  it("handles missing or empty metadata", () => {
+    expect(collectRagSourcesFromMetadata(null)).toEqual([]);
+    expect(collectRagSourcesFromMetadata({})).toEqual([]);
+  });
+});
+
+describe("formatSourceLabel", () => {
+  it("names the user's own BMC blocks", () => {
+    expect(formatSourceLabel("user_context:bmc_value_propositions")).toBe(
+      "Your Business Model Canvas · value propositions"
+    );
+  });
+
+  it("names earlier workflow steps", () => {
+    expect(formatSourceLabel("user_context:swot")).toBe("Your earlier step · swot");
+  });
+
+  it("labels each knowledge collection readably", () => {
+    expect(formatSourceLabel("business_plan_sections:Executive Summary")).toContain(
+      "Business plan guidance"
+    );
+    expect(formatSourceLabel("sdg_knowledge:sdg_7")).toContain("UN SDG reference");
+    expect(formatSourceLabel("industry_patterns:market_tam")).toContain("Industry pattern");
+  });
+
+  it("falls back gracefully for unknown shapes", () => {
+    expect(formatSourceLabel("something_else")).toBe("something else");
+    expect(formatSourceLabel("")).toBe("");
+  });
+});
 
 describe("formatAgentText", () => {
   it("returns strings unchanged", () => {

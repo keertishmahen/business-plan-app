@@ -174,6 +174,18 @@ export function isServerManaged() {
 }
 
 /**
+ * Attach retrieval sources to agent metadata without clobbering it.
+ * Keeps provenance and agent telemetry in one object for the context panel.
+ * @param {object|null} metadata
+ * @param {string[]|undefined} sources
+ * @returns {object|null}
+ */
+function withSources(metadata, sources) {
+  if (!Array.isArray(sources) || sources.length === 0) return metadata || null;
+  return { ...(metadata || {}), sources };
+}
+
+/**
  * Call the RAG backend for context-enriched generation.
  * Falls back to direct Gemini call if backend is unavailable (dev only).
  * @param {string} prompt - Full prompt string
@@ -184,7 +196,7 @@ export function isServerManaged() {
  * @param {object} params.options - Optional generation config
  * @returns {Promise<string>} Generated response text
  */
-export async function callRAG(prompt, { stepId, sessionId, userStory, options = {} } = {}) {
+export async function callRAG(prompt, { stepId, sessionId, userStory, options = {}, onMeta } = {}) {
   const base = getRagBaseUrl();
   try {
     const res = await fetch(`${base}/api/generate`, {
@@ -194,6 +206,11 @@ export async function callRAG(prompt, { stepId, sessionId, userStory, options = 
     });
     if (!res.ok) throw new Error(`RAG server error: ${res.status}`);
     const data = await res.json();
+    // Retrieval provenance is reported separately so the return type stays a
+    // plain string for every existing caller (feedback p29: RAG was invisible).
+    if (onMeta) {
+      onMeta({ sources: data.sources || [], contextUsed: data.contextUsed || null });
+    }
     return data.response;
   } catch (error) {
     if (isServerManaged()) {
@@ -347,7 +364,12 @@ export async function callMultiAgentStream(prompt, params = {}, onProgress) {
 
     const result = await parseSSEStream(res, onProgress);
     if (result?.response) {
-      return { response: result.response, agentMetadata: result.agentMetadata };
+      // Carry retrieval provenance alongside the agent metadata so the context
+      // panel can show which documents grounded this step (feedback p29).
+      return {
+        response: result.response,
+        agentMetadata: withSources(result.agentMetadata, result.sources),
+      };
     }
 
     throw new Error("Stream completed without response");
@@ -405,7 +427,10 @@ export async function callMultiAgent(prompt, params = {}, onProgress, options = 
       });
     }
 
-    return { response: data.response, agentMetadata: data.agentMetadata || null };
+    return {
+      response: data.response,
+      agentMetadata: withSources(data.agentMetadata, data.sources),
+    };
   } catch (error) {
     console.warn("[MultiAgent] Falling back to direct RAG:", error.message);
     const unreachable = isUnreachableError(error) || options.streamFailedUnreachable;

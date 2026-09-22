@@ -149,14 +149,58 @@ export function sanitizeAgentMetadata(metadata) {
   return { ...metadata, specialists, conflicts };
 }
 
-/** Collect unique RAG source labels from specialist metadata. */
+/**
+ * Collect unique RAG source labels for display.
+ *
+ * Includes both the retrieval provenance returned by the backend
+ * (`metadata.sources` — which knowledge and prior-step documents grounded this
+ * step) and any sources the specialists cited. Retrieval sources come first
+ * because they are what actually grounded the generation.
+ */
 export function collectRagSourcesFromMetadata(metadata) {
-  if (!metadata?.specialists) return [];
+  if (!metadata) return [];
   const sources = [];
-  Object.values(metadata.specialists).forEach((spec) => {
+
+  if (Array.isArray(metadata.sources)) {
+    sources.push(...formatAgentTextList(metadata.sources));
+  }
+
+  Object.values(metadata.specialists || {}).forEach((spec) => {
     if (spec?.sources?.length) {
       sources.push(...formatAgentTextList(spec.sources));
     }
   });
+
   return [...new Set(sources)].filter(Boolean);
+}
+
+/**
+ * Turn a raw source label into something readable.
+ * e.g. "user_context:bmc_value_propositions" → "Your BMC · value propositions"
+ */
+export function formatSourceLabel(source) {
+  const raw = String(source || "");
+  const [collection, ...rest] = raw.split(":");
+  const detail = rest.join(":").trim();
+
+  const titled = (s) => s.replace(/[_-]+/g, " ").trim();
+
+  switch (collection) {
+    case "user_context": {
+      if (detail.startsWith("bmc_")) {
+        return `Your Business Model Canvas · ${titled(detail.slice(4))}`;
+      }
+      return `Your earlier step · ${titled(detail)}`;
+    }
+    case "business_plan_sections":
+      return `Business plan guidance · ${titled(detail)}`;
+    case "business_frameworks":
+      return `Business framework · ${titled(detail)}`;
+    case "sdg_knowledge":
+      return `UN SDG reference · ${titled(detail).toUpperCase()}`;
+    case "industry_patterns":
+      return `Industry pattern · ${titled(detail)}`;
+    default:
+      return titled(raw);
+  }
 }
