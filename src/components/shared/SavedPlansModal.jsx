@@ -75,7 +75,12 @@ export default function SavedPlansModal({
 
         <div className="modal-glass-panel__body">
           <p style={{ fontSize: 13, color: "var(--color-text-secondary)", marginBottom: 20, lineHeight: 1.6 }}>
-            Plans saved in this browser. Restore one to continue where you left off, or delete entries you no longer need.
+            Restore one to continue where you left off, or delete entries you no longer need.
+            {" "}
+            <strong>These plans are stored only in this browser on this device.</strong>{" "}
+            They are not uploaded anywhere, so clearing your browser data or switching
+            device will lose them — export a plan to Word or PowerPoint to keep a
+            permanent copy.
           </p>
 
           {archives.length === 0 ? (

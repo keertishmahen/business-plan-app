@@ -16,6 +16,7 @@ import FeedbackBar      from "./components/shared/FeedbackBar";
 import FeedbackAcknowledgment from "./components/shared/FeedbackAcknowledgment";
 import LoadingState     from "./components/shared/LoadingState";
 import BackButton       from "./components/shared/BackButton";
+import StoryReadback    from "./components/shared/StoryReadback";
 import MIADashboard     from "./components/dashboard/MIADashboard";
 import SDGMapperModal   from "./components/dashboard/SDGMapperModal";
 import SavedPlansModal   from "./components/shared/SavedPlansModal";
@@ -288,21 +289,12 @@ export default function App() {
 
   // Feedback acknowledgment message state (Task 9.3)
   const [feedbackMessage, setFeedbackMessage] = useState("");
-  const [focusInferenceReview, setFocusInferenceReview] = useState(false);
 
   // SDG Mapper overlay
   const [showSDGMapper, setShowSDGMapper] = useState(false);
   const [sdgMappingLoading, setSdgMappingLoading] = useState(false);
   const [sdgMappingError, setSdgMappingError] = useState(null);
   const [sdgMappingWarning, setSdgMappingWarning] = useState(null);
-
-  useEffect(() => {
-    if (state.currentStep === "focus" && state.outputs.focus?.inferences) {
-      setFocusInferenceReview(true);
-    } else if (state.currentStep !== "focus") {
-      setFocusInferenceReview(false);
-    }
-  }, [state.currentStep, state.outputs.focus]);
 
   useEffect(() => {
     const swotOutput = state.outputs.swot;
@@ -663,7 +655,10 @@ export default function App() {
     dispatch({ type: "SET_STORY", payload: text });
     dispatch({ type: "SET_PHASE", payload: "workflow" });
     dispatch({ type: "SET_OUTPUT", payload: { stepId: "story", data: { text } } });
-    dispatch({ type: "COMPLETE_STEP" }); // completes story → advances to focus
+    // Deliberately no COMPLETE_STEP here. Step 1 now ends with the story
+    // readback (feedback p31), and only advances once the user confirms it —
+    // see handleStoryReadbackConfirm. This also removes one of the two
+    // independent advance paths that made navigation hard to reason about.
 
     // Store user story in RAG vector DB for all subsequent steps to reference
     storeStepOutput(sessionId, "story", text);
@@ -682,6 +677,20 @@ export default function App() {
       setWorkflowError(e.message);
     }
     setWorkflowLoading(false);
+  }
+
+  // ── Story readback confirmed → Step 1 complete, advance to Step 2 ──
+  // The user may have corrected what we read out of their story; persist the
+  // corrections onto the focus output before moving on so every later step
+  // builds on the confirmed version.
+  function handleStoryReadbackConfirm(confirmedInferences) {
+    const focusData = state.outputs.focus;
+    if (focusData) {
+      const updated = { ...focusData, inferences: confirmedInferences };
+      dispatch({ type: "SET_OUTPUT", payload: { stepId: "focus", data: updated } });
+      storeStepOutput(sessionId, "focus", updated);
+    }
+    dispatch({ type: "COMPLETE_STEP" }); // story → focus
   }
 
   // ── Guided input completion → same as story submit ─────────────
@@ -936,8 +945,7 @@ export default function App() {
   const showFeedbackDock = !state.loading
     && hasOutput
     && state.currentStep !== "plan"
-    && state.currentStep !== "story"
-    && !(state.currentStep === "focus" && state.outputs.focus?.inferences && focusInferenceReview);
+    && state.currentStep !== "story";
 
   const sdgAlignments = mergeSdgAlignments(
     state.outputs.sdg_mapping?.sdg_alignments || [],
@@ -974,7 +982,17 @@ export default function App() {
   const workflowContent = (
     <>
       {state.currentStep === "story" && (
-        <StoryStep onSubmit={handleStorySubmit} initialText={state.story} />
+        <>
+          <StoryStep onSubmit={handleStorySubmit} initialText={state.story} />
+          {/* Step 1 closes with what we understood, for the user to confirm or
+              correct, before the Dilemma Triangle Method starts (p31). */}
+          {state.outputs.focus?.inferences && !state.loading && (
+            <StoryReadback
+              inferences={state.outputs.focus.inferences}
+              onConfirm={handleStoryReadbackConfirm}
+            />
+          )}
+        </>
       )}
 
       {state.currentStep !== "story" && (
@@ -1022,10 +1040,7 @@ export default function App() {
               />
 
               {state.currentStep === "focus"    && (
-                <FocusStep
-                  data={state.outputs.focus}
-                  onInferenceReviewChange={setFocusInferenceReview}
-                />
+                <FocusStep data={state.outputs.focus} />
               )}
               {state.currentStep === "issues"   && <IssuesStep   data={state.outputs.issues} />}
               {state.currentStep === "tensions" && (

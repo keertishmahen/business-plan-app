@@ -78,7 +78,10 @@ describe("BMCStep", () => {
     expect(container.querySelector(".bmc-pillar__eyebrow")).not.toBeInTheDocument();
   });
 
-  it("does not render duplicate RefinementInvitation", () => {
+  it("does not render the non-functional 'Refine this' control", () => {
+    // Reported in feedback p5 as an icon that appeared on every step but did
+    // nothing. The component behind it has been deleted; refinement happens
+    // through the feedback dock instead.
     render(<BMCStep data={llmData} />);
     expect(screen.queryByText("Refine this")).not.toBeInTheDocument();
   });

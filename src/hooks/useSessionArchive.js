@@ -4,7 +4,10 @@
  */
 
 export const ARCHIVE_STORAGE_KEY = "nexus-mia-archives";
-export const MAX_ARCHIVES = 5;
+// Raised from 5 after feedback p34: people were silently losing older plans.
+// Still bounded because localStorage has a ~5MB per-origin quota and each
+// archive carries every step's output.
+export const MAX_ARCHIVES = 25;
 
 function safeParse(raw) {
   try {
