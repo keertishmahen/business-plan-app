@@ -108,7 +108,9 @@ async def fact_check(content: str, rag_context: dict[str, Any]) -> dict[str, Any
             user_content,
             system_prompt=_FACT_CHECK_PROMPT,
             temperature=0.1,
-            max_output_tokens=2048,
+            max_output_tokens=4096,
+            json_mode=True,
+            disable_thinking=True,
         )
         parsed = parse_json_response(raw)
         if not isinstance(parsed, dict):
@@ -170,7 +172,9 @@ async def consistency_check(content: str, session_id: str) -> dict[str, Any]:
             user_content,
             system_prompt=_CONSISTENCY_PROMPT,
             temperature=0.1,
-            max_output_tokens=2048,
+            max_output_tokens=4096,
+            json_mode=True,
+            disable_thinking=True,
         )
         parsed = parse_json_response(raw)
         if not isinstance(parsed, dict):
@@ -215,7 +219,9 @@ async def critic_review(content: str) -> dict[str, Any]:
             f"=== CONTENT TO REVIEW ===\n{content}",
             system_prompt=_CRITIC_PROMPT,
             temperature=0.2,
-            max_output_tokens=2048,
+            max_output_tokens=4096,
+            json_mode=True,
+            disable_thinking=True,
         )
         parsed = parse_json_response(raw)
         if not isinstance(parsed, dict):

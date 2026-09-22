@@ -81,11 +81,19 @@ function buildAgentProgressPatch(progress) {
   };
 
   if (event === "stage" && name) {
-    patch.activeStage = name;
+    // Only a running stage is "active". Leaving activeStage pinned to a
+    // specialist that has already finished made the pipeline look stuck.
+    patch.activeStage = status === "running" ? name : null;
+
     if (isSpecialistAgent(name)) {
-      if (status === "running") {
-        patch.statusUpdates.push({ agentId: name, status: "running", confidence });
-        patch.activityEvents.push({ name, status: "running", timestamp: Date.now() });
+      if (status) {
+        // Terminal specialist stages (complete / degraded / error) used to be
+        // dropped here, leaving the card on "Queued" if the separate
+        // `specialist` event never arrived.
+        patch.statusUpdates.push({ agentId: name, status, confidence });
+        if (status === "running") {
+          patch.activityEvents.push({ name, status: "running", timestamp: Date.now() });
+        }
       }
     } else if (status) {
       patch.statusUpdates.push({ agentId: name, status, confidence });

@@ -48,16 +48,24 @@ export const ALL_AGENT_IDS = Object.keys(AGENT_CONFIG);
 
 /**
  * Which agents are active for each workflow step.
+ *
+ * MUST stay in sync with STEP_AGENT_MAP in
+ * server_py/app/agents/orchestrator.py. This copy seeds the agent panel before
+ * streaming starts, so drift shows up as cards stuck on "Standby".
+ *
+ * All four specialists contribute to every generating step. Market and
+ * Financial previously ran only on bmc/plan, leaving half the panel idle for
+ * most of the workflow; they run concurrently so wall-clock cost is ~flat.
  */
 export const STEP_AGENTS = {
-  focus: ["sdg"],
-  issues: ["sdg"],
-  tensions: ["sdg", "critique"],
-  dilemmas: ["sdg", "critique"],
-  values: ["market", "sdg"],
-  swot: ["market", "sdg"],
-  bmc: ["market", "financial", "sdg", "critique"],
-  plan: ["market", "financial", "sdg", "critique"],
+  focus: [...ALL_AGENT_IDS],
+  issues: [...ALL_AGENT_IDS],
+  tensions: [...ALL_AGENT_IDS],
+  dilemmas: [...ALL_AGENT_IDS],
+  values: [...ALL_AGENT_IDS],
+  swot: [...ALL_AGENT_IDS],
+  bmc: [...ALL_AGENT_IDS],
+  plan: [...ALL_AGENT_IDS],
 };
 
 export function getActiveAgents(stepId) {

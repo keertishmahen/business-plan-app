@@ -22,16 +22,27 @@ log = logging.getLogger(__name__)
 
 ProgressFn = Callable[[dict[str, Any]], Awaitable[None] | None]
 
-# Which specialists run per workflow step (orchestrator.js:26).
+# Which specialists run per workflow step.
+#
+# MUST stay in sync with STEP_AGENTS in src/constants/agents.js — the frontend
+# uses its copy to seed the agent panel before streaming starts, so any drift
+# shows up as cards that never leave "Standby".
+#
+# All four specialists now contribute to every generating step. Previously
+# Market and Financial only ran on bmc/plan, which left two of the four cards
+# idle for most of the workflow and read as the agents being broken. They run
+# concurrently, so wall-clock cost is roughly flat.
+_ALL_SPECIALISTS = {"market": True, "financial": True, "sdg": True, "critique": True}
+
 STEP_AGENT_MAP: dict[str, dict[str, bool]] = {
-    "focus": {"sdg": True},
-    "issues": {"sdg": True},
-    "tensions": {"sdg": True, "critique": True},
-    "dilemmas": {"sdg": True, "critique": True},
-    "values": {"market": True, "sdg": True},
-    "swot": {"market": True, "sdg": True},
-    "bmc": {"market": True, "financial": True, "sdg": True, "critique": True},
-    "plan": {"market": True, "financial": True, "sdg": True, "critique": True},
+    "focus": dict(_ALL_SPECIALISTS),
+    "issues": dict(_ALL_SPECIALISTS),
+    "tensions": dict(_ALL_SPECIALISTS),
+    "dilemmas": dict(_ALL_SPECIALISTS),
+    "values": dict(_ALL_SPECIALISTS),
+    "swot": dict(_ALL_SPECIALISTS),
+    "bmc": dict(_ALL_SPECIALISTS),
+    "plan": dict(_ALL_SPECIALISTS),
 }
 
 CONSISTENCY_STEPS = {

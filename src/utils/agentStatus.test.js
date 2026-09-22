@@ -13,13 +13,18 @@ import {
 
 describe("agentStatus utils", () => {
   describe("resolveAgentDisplayStatus", () => {
-    it("shows standby for inactive agents even when stored status is error", () => {
-      const status = resolveAgentDisplayStatus(
-        "financial",
-        { financial: "error" },
-        ["market", "sdg"],
-      );
-      expect(status).toBe("standby");
+    // Regression: agents sat on "Standby" while the activity feed reported them
+    // finishing. The active-agent list is derived from state.currentStep, which
+    // during the story -> focus auto-generation is still "story" — a step with no
+    // agent mapping — so the old gate discarded every real status.
+    it("keeps a completed status even when the active list is empty", () => {
+      expect(resolveAgentDisplayStatus("sdg", { sdg: "complete" }, [])).toBe("complete");
+    });
+
+    it("keeps a stored status even when the agent is absent from the active list", () => {
+      expect(
+        resolveAgentDisplayStatus("financial", { financial: "running" }, ["market", "sdg"]),
+      ).toBe("running");
     });
 
     it("shows stored status for active agents", () => {
@@ -33,6 +38,12 @@ describe("agentStatus utils", () => {
 
     it("defaults active agents to idle when no stored status", () => {
       expect(resolveAgentDisplayStatus("market", {}, ["market", "sdg"])).toBe("idle");
+    });
+
+    // INIT_MIA_AGENTS seeds every agent each run, so an empty map means the
+    // pipeline has not started — standby is the honest label there.
+    it("falls back to standby for an unseeded, inactive agent", () => {
+      expect(resolveAgentDisplayStatus("financial", {}, ["market", "sdg"])).toBe("standby");
     });
   });
 

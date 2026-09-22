@@ -28,7 +28,10 @@ CHROMA_PATH = os.getenv("CHROMA_PATH", str(BASE_DIR / "chroma"))
 KNOWLEDGE_DIR = Path(__file__).resolve().parent / "knowledge"
 
 # ── Agent behaviour ───────────────────────────────────────────────
-AGENT_TIMEOUT_SECONDS = float(os.getenv("AGENT_TIMEOUT_SECONDS", "30"))
+# 30s was too tight: the feedback deck shows "Financial Modelling — Agent failed:
+# Agent timed out after 30000ms". Specialists now also get one retry, so this
+# covers two round trips.
+AGENT_TIMEOUT_SECONDS = float(os.getenv("AGENT_TIMEOUT_SECONDS", "90"))
 MAX_REWRITES = 2
 
 # Retrieval: cosine distance above this is treated as irrelevant.

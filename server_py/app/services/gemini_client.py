@@ -42,23 +42,52 @@ async def generate_text(
     system_prompt: str | None = None,
     temperature: float = 0.7,
     max_output_tokens: int = 4096,
+    json_mode: bool = False,
+    disable_thinking: bool = False,
 ) -> str:
-    """Single-turn generation. Returns the model's text."""
+    """Single-turn generation. Returns the model's text.
+
+    `json_mode` asks Gemini for `application/json`, which removes markdown
+    fences and guarantees a parseable body.
+
+    `disable_thinking` sets thinkingBudget to 0. This matters more than it
+    looks: measured on gemini-2.5-flash, a 2048-token budget was spending
+    ~1050 tokens on thinking and only ~540 on the answer, so specialist JSON
+    was being truncated mid-structure and failing to parse. Structured
+    extraction does not need the thinking pass; long-form writing does, so it
+    keeps it.
+    """
     key = _require_key()
     url = f"{GEMINI_BASE_URL}/{CHAT_MODEL}:generateContent?key={key}"
 
+    generation_config: dict[str, Any] = {
+        "temperature": temperature,
+        "maxOutputTokens": max_output_tokens,
+    }
+    if json_mode:
+        generation_config["responseMimeType"] = "application/json"
+    if disable_thinking:
+        generation_config["thinkingConfig"] = {"thinkingBudget": 0}
+
     body: dict[str, Any] = {
         "contents": [{"role": "user", "parts": [{"text": prompt}]}],
-        "generationConfig": {
-            "temperature": temperature,
-            "maxOutputTokens": max_output_tokens,
-        },
+        "generationConfig": generation_config,
     }
     if system_prompt:
         body["systemInstruction"] = {"parts": [{"text": system_prompt}]}
 
     async with httpx.AsyncClient(timeout=_TIMEOUT) as client:
         res = await client.post(url, json=body)
+
+        # If the model or API version rejects the tuning options, retry once
+        # without them rather than failing the whole step.
+        if res.status_code == 400 and (json_mode or disable_thinking):
+            log.warning("Gemini rejected generationConfig tuning; retrying plain")
+            body["generationConfig"] = {
+                "temperature": temperature,
+                "maxOutputTokens": max_output_tokens,
+            }
+            res = await client.post(url, json=body)
 
     if res.status_code != 200:
         detail = ""
@@ -73,12 +102,21 @@ async def generate_text(
     if not candidates:
         raise GeminiError("Gemini returned no candidates")
 
-    parts = candidates[0].get("content", {}).get("parts") or []
+    candidate = candidates[0]
+    parts = candidate.get("content", {}).get("parts") or []
     text = "".join(p.get("text", "") for p in parts).strip()
     if not text:
         # A blocked or truncated response still has a finishReason worth surfacing.
-        reason = candidates[0].get("finishReason", "unknown")
+        reason = candidate.get("finishReason", "unknown")
         raise GeminiError(f"Gemini returned empty text (finishReason={reason})")
+
+    # MAX_TOKENS means the body is cut off mid-structure — the caller needs to
+    # know, because parsing it will fail in a way that looks like a bad model.
+    if candidate.get("finishReason") == "MAX_TOKENS":
+        log.warning(
+            "Gemini hit MAX_TOKENS (%d requested) — output is truncated", max_output_tokens
+        )
+
     return text
 
 

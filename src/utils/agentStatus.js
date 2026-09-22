@@ -26,12 +26,20 @@ export function getPipelineStageLabel(name) {
  * Inactive agents always show standby — never stale error/unavailable.
  */
 export function resolveAgentDisplayStatus(agentId, agentStatuses, activeAgentIds) {
-  const isActive = activeAgentIds.includes(agentId);
   const stored = agentStatuses[agentId];
 
-  if (!isActive) return "standby";
+  // The stored status is authoritative and can never be stale: RESET_AGENT_STATE
+  // clears the map and INIT_MIA_AGENTS re-seeds every agent at the start of each
+  // run ("queued" if active, "standby" if not).
+  //
+  // This used to short-circuit to "standby" whenever the agent was missing from
+  // activeAgentIds, which threw away a real "complete". That list is derived from
+  // state.currentStep, and during the story -> focus auto-generation currentStep
+  // is still "story", which has no entry — so every card was forced to Standby
+  // even as the activity feed reported the agent finishing.
   if (stored) return stored;
-  return "idle";
+
+  return activeAgentIds.includes(agentId) ? "idle" : "standby";
 }
 
 /**

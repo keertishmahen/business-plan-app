@@ -140,37 +140,38 @@ export async function callGeminiJSON(prompt, opts = {}) {
 //  (local/dev only — never on Azure static hosting).
 // ──────────────────────────────────────────────────────────────────
 
-const AZURE_API_URL = "https://symetra-mia-api.azurewebsites.net";
-const AZURE_STATIC_HOST_HINT = "symetramiaweb";
-
 function isLocalUrl(url) {
   if (!url) return true;
   return url.includes("localhost") || url.includes("127.0.0.1");
 }
 
-function isAzureStaticHost() {
+/** True when the page is served from somewhere other than a local dev server. */
+function isDeployedHost() {
   if (typeof window === "undefined" || !window.location?.hostname) return false;
-  return window.location.hostname.includes(AZURE_STATIC_HOST_HINT);
+  const { hostname } = window.location;
+  return hostname !== "localhost" && hostname !== "127.0.0.1";
 }
 
 /**
  * Resolve the RAG base URL at call time.
- * Production CRA builds use .env.production; this also corrects stale
- * localhost builds accidentally deployed to Azure static hosting.
+ *
+ * REACT_APP_RAG_URL (baked in by .env.production at build time) is the single
+ * source of truth. There used to be a hardcoded fallback to the old Node App
+ * Service, keyed off the previous static host name; that backend is retired, so
+ * silently redirecting to it would have been worse than failing loudly.
  */
 export function getRagBaseUrl() {
-  const envUrl = process.env.REACT_APP_RAG_URL || "";
-  if (isAzureStaticHost() && isLocalUrl(envUrl)) {
-    return AZURE_API_URL;
-  }
-  return envUrl || "http://localhost:3002";
+  return process.env.REACT_APP_RAG_URL || "http://localhost:3002";
 }
 
 /** Production mode: all AI calls go through the RAG backend (no browser API key). */
 export function isServerManaged() {
-  if (isAzureStaticHost()) return true;
   const url = getRagBaseUrl();
-  return !isLocalUrl(url);
+  if (!isLocalUrl(url)) return true;
+  // Deployed but pointing at localhost means the build was misconfigured —
+  // treat it as server-managed so it surfaces as an error instead of silently
+  // asking the user for a browser API key.
+  return isDeployedHost();
 }
 
 /**

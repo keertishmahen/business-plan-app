@@ -173,6 +173,25 @@ def build_agent_prompt(
     return "\n\n".join(sections)
 
 
+# Structured extraction needs room for the answer, not for a thinking pass.
+# Measured: with 2048 tokens and thinking on, ~1050 went to thinking and the
+# JSON was truncated mid-array, so every specialist failed to parse.
+SPECIALIST_MAX_TOKENS = 4096
+
+
+async def _ask(spec: Specialist, user_content: str) -> Any | None:
+    """One model round trip, returning parsed JSON or None."""
+    raw = await generate_text(
+        user_content,
+        system_prompt=spec.system_prompt,
+        temperature=0.4,
+        max_output_tokens=SPECIALIST_MAX_TOKENS,
+        json_mode=True,
+        disable_thinking=True,
+    )
+    return parse_json_response(raw)
+
+
 async def analyze(
     agent_id: str,
     *,
@@ -195,19 +214,19 @@ async def analyze(
         step_id=step_id,
     )
 
-    try:
-        raw = await generate_text(
-            user_content,
-            system_prompt=spec.system_prompt,
-            temperature=0.4,
-            max_output_tokens=2048,
-        )
-        parsed = parse_json_response(raw)
-        if parsed is None:
-            # Not JSON, but the prose is still useful — normalize_agent_output
-            # promotes "summary" into insights when no array was returned.
-            return normalize_agent_output({"summary": raw, "confidence": 0.3}, agent_id)
-        return normalize_agent_output(parsed, agent_id)
-    except Exception as exc:  # noqa: BLE001 - a specialist must never sink the step
-        log.error("[%sAgent] %s", agent_id, exc)
-        return create_fallback_result(agent_id, str(exc))
+    last_error = "did not return usable JSON"
+
+    # One retry. A single malformed response is usually transient; two in a row
+    # means the step genuinely lacks this specialist's input, and saying so is
+    # better than passing a wall of raw text off as an insight.
+    for attempt in (1, 2):
+        try:
+            parsed = await _ask(spec, user_content)
+            if parsed is not None:
+                return normalize_agent_output(parsed, agent_id)
+            log.warning("[%sAgent] unparseable response (attempt %d)", agent_id, attempt)
+        except Exception as exc:  # noqa: BLE001 - a specialist must never sink the step
+            last_error = str(exc)
+            log.error("[%sAgent] attempt %d failed: %s", agent_id, attempt, exc)
+
+    return create_fallback_result(agent_id, last_error)
