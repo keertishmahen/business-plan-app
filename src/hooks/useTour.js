@@ -8,7 +8,7 @@ export const TOUR_STEPS = [
     id: 1,
     title: "Welcome & Onboarding",
     description:
-      "The onboarding page introduces Symetra Systems: who we are, the platform, process, values, and why it matters. Use Start creating to begin co-creating, or take this tour first.",
+      "The onboarding page introduces Symmetra Systems: who we are, the platform, process, values, and why it matters. Use Start creating to begin co-creating, or take this tour first.",
     exampleData: {
       bullets: [
         "Brand hero with a clear outcome in ~30 minutes",
@@ -53,7 +53,7 @@ export const TOUR_STEPS = [
     id: 4,
     title: "The Triangle",
     description:
-      "Each corner of the triangle is a driver. Tensions appear on the edges — for example faster growth (Prosperity) versus lower emissions (Planet). Symetra helps you name and rank those dilemmas.",
+      "Each corner of the triangle is a driver. Tensions appear on the edges — for example faster growth (Prosperity) versus lower emissions (Planet). Symmetra helps you name and rank those dilemmas.",
     exampleData: {
       dtmTriangle: true,
     },
@@ -63,7 +63,7 @@ export const TOUR_STEPS = [
     id: 5,
     title: "DTM step by step",
     description:
-      "In Symetra Systems, DTM runs through the workflow as a clear sequence — from your story to a model you can act on.",
+      "In Symmetra Systems, DTM runs through the workflow as a clear sequence — from your story to a model you can act on.",
     exampleData: {
       steps: [
         "Tell your story and who you serve",

@@ -883,7 +883,7 @@ export default function App() {
   if (!apiKeyAvailable) {
     if (isServerManaged() && !ragBackendReady) {
       return (
-        <LoadingState label="Connecting to Symetra Systems server…" />
+        <LoadingState label="Connecting to Symmetra Systems server…" />
       );
     }
     return <ApiKeyScreen onSubmit={handleApiKeySubmit} />;

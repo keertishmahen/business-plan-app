@@ -1,7 +1,7 @@
 import React from 'react';
 
 /**
- * Shared inline SVG icon components for the Symetra Systems UI.
+ * Shared inline SVG icon components for the Symmetra Systems UI.
  * All icons accept `size` and `color` props with sensible defaults.
  * Decorative icons include role="img" and aria-hidden="true".
  */

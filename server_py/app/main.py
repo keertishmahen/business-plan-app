@@ -1,4 +1,4 @@
-"""FastAPI entry point for the Symetra RAG + MIA backend.
+"""FastAPI entry point for the Symmetra RAG + MIA backend.
 
 Replaces the Node/Express server in server/. Route paths and payload shapes are
 unchanged so the React client only needs a new base URL.
@@ -40,7 +40,7 @@ async def lifespan(_app: FastAPI):
 
 
 app = FastAPI(
-    title="Symetra RAG + MIA API",
+    title="Symmetra RAG + MIA API",
     description="SDG-aligned business model co-pilot: retrieval, agents and generation.",
     version="2.0.0",
     lifespan=lifespan,
@@ -65,7 +65,7 @@ app.include_router(context.router, prefix="/api/context", tags=["context"])
 @app.get("/")
 async def root():
     return {
-        "service": "Symetra RAG + MIA API",
+        "service": "Symmetra RAG + MIA API",
         "endpoints": [
             "GET  /api/health",
             "POST /api/generate",

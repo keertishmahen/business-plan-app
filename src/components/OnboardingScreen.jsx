@@ -257,7 +257,7 @@ export default function OnboardingScreen({
               Who We Are
             </h2>
             <p className="entry-about__sub entry-reveal" style={{ "--entry-stagger": 2 }}>
-              Symetra Systems helps founders and teams co-create clear, SDG-aligned business models — so strategy stays actionable, not buried in slides.
+              Symmetra Systems helps founders and teams co-create clear, SDG-aligned business models — so strategy stays actionable, not buried in slides.
             </p>
           </div>
           <div className="entry-about__grid">
@@ -359,7 +359,7 @@ export default function OnboardingScreen({
               className="entry-about__title entry-reveal"
               style={{ "--entry-stagger": 1 }}
             >
-              The Values Behind Symetra Systems
+              The Values Behind Symmetra Systems
             </h2>
             <p className="entry-about__sub entry-reveal" style={{ "--entry-stagger": 2 }}>
               A few principles that keep co-creation useful, trustworthy, and sustainable.
@@ -395,7 +395,7 @@ export default function OnboardingScreen({
               className="entry-about__title entry-reveal"
               style={{ "--entry-stagger": 1 }}
             >
-              What makes Symetra different
+              What makes Symmetra different
             </h2>
             <p className="entry-about__sub entry-reveal" style={{ "--entry-stagger": 2 }}>
               Foundations you can rely on — not one-off tips or a black-box plan generator.
@@ -419,7 +419,7 @@ export default function OnboardingScreen({
               className="entry-why-card entry-why-card--highlight entry-reveal"
               style={{ "--entry-stagger": 4 }}
             >
-              <h3 className="entry-why-card__title">With Symetra Systems</h3>
+              <h3 className="entry-why-card__title">With Symmetra Systems</h3>
               <ul className="entry-why-card__list">
                 {WITH_SYMETRA.map((item) => (
                   <li key={item}>

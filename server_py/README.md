@@ -1,4 +1,4 @@
-# Symetra RAG + MIA backend (Python / FastAPI)
+# Symmetra RAG + MIA backend (Python / FastAPI)
 
 Replaces the Node/Express server in `../server`. Same routes, same payloads — the
 React client only needs a different base URL.
