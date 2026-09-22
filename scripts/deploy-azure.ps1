@@ -34,7 +34,7 @@ param(
     [string]$AppName       = "ca-symetra-api",
     [string]$Registry      = "acrsymetrav228317",
     [string]$StorageAccount= "stsymetrav228637",
-    [string]$ImageTag      = "v3",
+    [string]$ImageTag      = "v4",
     [switch]$BackendOnly,
     [switch]$FrontendOnly
 )
