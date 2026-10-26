@@ -1,0 +1,64 @@
+# Build the React app and publish it to GitHub Pages.
+# The API URL comes from the repo variable RAG_URL (falls back to .env.production).
+# No Gemini key is ever baked in — generation goes through the backend.
+name: Deploy frontend (GitHub Pages)
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - "server_py/**"
+      - ".github/workflows/deploy-backend.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Test
+        run: npm test -- --watchAll=false
+        env:
+          CI: true
+
+      # Only export when set: an empty REACT_APP_RAG_URL would shadow .env.production.
+      - name: Build
+        run: |
+          if [ -n "$RAG_URL" ]; then export REACT_APP_RAG_URL="$RAG_URL"; fi
+          npm run build
+        env:
+          CI: true
+          RAG_URL: ${{ vars.RAG_URL }}
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: build
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

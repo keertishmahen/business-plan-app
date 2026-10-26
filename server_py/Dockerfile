@@ -23,8 +23,8 @@ RUN mkdir -p /data/chroma
 ENV PORT=3002
 EXPOSE 3002
 
-# Run as non-root, and make sure it owns the volume mount point.
-RUN useradd --create-home --uid 10001 appuser && chown -R appuser:appuser /data /app
+# Run as non-root (uid 1000, as Hugging Face Spaces expects) and own the data dir.
+RUN useradd --create-home --uid 1000 appuser && chown -R appuser:appuser /data /app
 USER appuser
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \

@@ -2,6 +2,7 @@
   "name": "business-plan-copilot",
   "version": "1.0.0",
   "private": true,
+  "homepage": "https://keertishmahen.github.io/business-plan-app",
   "dependencies": {
     "docx": "^8.5.0",
     "file-saver": "^2.0.5",

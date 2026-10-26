@@ -1,0 +1,121 @@
+# Test the FastAPI backend, then push server_py/ to a Hugging Face Docker Space.
+# The Space builds server_py/Dockerfile itself; the knowledge base self-seeds
+# from the bundled vector snapshot on every cold start.
+#
+# Repo secrets : HF_TOKEN (HF write token), GEMINI_API_KEY
+# Repo variables (optional): HF_SPACE (default keertishmahen/symetra-mia-api),
+#                            CORS_ORIGIN (default https://keertishmahen.github.io)
+name: Deploy backend (Hugging Face Space)
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "server_py/**"
+      - ".github/workflows/deploy-backend.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: hf-space
+  cancel-in-progress: false
+
+env:
+  HF_SPACE: ${{ vars.HF_SPACE || 'keertishmahen/symetra-mia-api' }}
+  CORS_ORIGIN: ${{ vars.CORS_ORIGIN || 'https://keertishmahen.github.io' }}
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: server_py
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: server_py/requirements.txt
+
+      - run: pip install -r requirements.txt pytest pytest-asyncio
+
+      - run: python -m pytest -q
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - run: pip install huggingface_hub
+
+      - name: Push to Space and wait until it is running
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        shell: python
+        run: |
+          import os, sys, time
+          from huggingface_hub import HfApi
+
+          token, gemini = os.environ.get("HF_TOKEN"), os.environ.get("GEMINI_API_KEY")
+          if not token or not gemini:
+              sys.exit("HF_TOKEN and GEMINI_API_KEY repo secrets are required")
+
+          space = os.environ["HF_SPACE"]
+          api = HfApi(token=token)
+          api.create_repo(space, repo_type="space", space_sdk="docker", exist_ok=True)
+
+          api.add_space_secret(space, "GEMINI_API_KEY", gemini)
+          api.add_space_variable(space, "CORS_ORIGIN", os.environ["CORS_ORIGIN"])
+
+          api.upload_folder(
+              repo_id=space,
+              repo_type="space",
+              folder_path="server_py",
+              commit_message=f"Deploy {os.environ['GITHUB_SHA'][:7]}",
+              ignore_patterns=["chroma/*", "**/__pycache__/*", ".venv/*", ".env", "tests/*", "pytest.ini"],
+              # Mirror deletions of app code without touching the Space's own files.
+              delete_patterns=["app/*", "scripts/*"],
+          )
+
+          # Wait for the rebuild to start, then for it to come up. A no-op deploy
+          # never rebuilds, so RUNNING is accepted after a grace period too.
+          start = time.time()
+          deadline = start + 25 * 60
+          saw_build = False
+          while time.time() < deadline:
+              stage = api.get_space_runtime(space).stage
+              print("stage:", stage, flush=True)
+              if stage in ("BUILD_ERROR", "RUNTIME_ERROR", "CONFIG_ERROR"):
+                  sys.exit(f"Space failed: {stage} — see https://huggingface.co/spaces/{space}?logs=container")
+              if stage in ("BUILDING", "RUNNING_BUILDING", "APP_STARTING"):
+                  saw_build = True
+              if stage == "RUNNING" and (saw_build or time.time() - start > 180):
+                  break
+              time.sleep(15)
+          else:
+              sys.exit("Timed out waiting for the Space to run")
+
+          owner, name = space.split("/")
+          url = f"https://{owner}-{name}".lower().replace("_", "-").replace(".", "-") + ".hf.space"
+          with open(os.environ["GITHUB_ENV"], "a") as f:
+              f.write(f"SPACE_URL={url}\n")
+
+      - name: Health check
+        run: |
+          for i in $(seq 1 20); do
+            body=$(curl -s --max-time 60 "$SPACE_URL/api/health" || true)
+            echo "$body"
+            echo "$body" | grep -q '"healthy"' && exit 0
+            sleep 15
+          done
+          exit 1

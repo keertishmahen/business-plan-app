@@ -42,6 +42,19 @@ npm run build
 
 The `build/` folder contains the static site — deploy to Vercel, Netlify, or any static host.
 
+### 5. Hosting (free, deployed from GitHub)
+
+Every push to `main` deploys through GitHub Actions:
+
+| Piece | Host | Workflow |
+|---|---|---|
+| React frontend | GitHub Pages — https://keertishmahen.github.io/business-plan-app/ | [deploy-frontend.yml](.github/workflows/deploy-frontend.yml) |
+| FastAPI backend | Hugging Face Docker Space — https://keertishmahen-symetra-mia-api.hf.space | [deploy-backend.yml](.github/workflows/deploy-backend.yml) (runs when `server_py/**` changes) |
+
+Repo secrets: `HF_TOKEN` (Hugging Face write token) and `GEMINI_API_KEY`. Repo variables: `RAG_URL` (API URL baked into the frontend), plus optional `HF_SPACE` and `CORS_ORIGIN`. The Space sleeps after 48h idle; the first request after that takes about a minute while it wakes. Per-session uploads don't survive a restart, but the knowledge base reseeds itself.
+
+Never upload a locally built `build/` folder: a local `.env` can bake `REACT_APP_GEMINI_API_KEY` into it. The Azure deploy script ([scripts/deploy-azure.ps1](scripts/deploy-azure.ps1)) is kept as a fallback.
+
 ## Project Structure
 
 ```
