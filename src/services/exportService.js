@@ -15,7 +15,7 @@ export const PLAN_SECTION_HEADINGS = [
   "Operations Plan",
   "Financial & Sustainability Outlook",
   "Key Risks & Mitigation Strategies",
-  "SDG Alignment & Impact",
+  "SDG Alignment & Six Capitals Impact",
   "Conclusion & Next Steps",
 ];
 
@@ -813,7 +813,7 @@ export async function exportToPowerPoint({ planText, selectedVP, story, swotData
     { num: 6, title: "Operations", subtitle: "How we deliver at scale" },
     { num: 7, title: "Financial & Sustainability", subtitle: "Economics and long-term viability" },
     { num: 8, title: "Risks & Mitigation", subtitle: "What could go wrong — and our response" },
-    { num: 9, title: "SDG Alignment", subtitle: "Impact on the UN Sustainable Development Goals" },
+    { num: 9, title: "SDG & Six Capitals", subtitle: "SDG impact and the capitals the business builds" },
     { num: 10, title: "Next Steps", subtitle: "Immediate priorities" },
   ];
 

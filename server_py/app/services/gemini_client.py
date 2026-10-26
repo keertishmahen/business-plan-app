@@ -173,6 +173,45 @@ async def generate_embedding(text: str) -> list[float]:
     return res.json()["embedding"]["values"]
 
 
+_EMBED_BATCH = 100  # batchEmbedContents request limit
+
+
+async def generate_embeddings_batch(texts: list[str]) -> list[list[float]]:
+    """Embed many strings with batchEmbedContents (100 per request).
+
+    Uploaded documents produce dozens of chunks; one request per chunk was
+    slow and rate-limit prone.
+    """
+    if not texts:
+        return []
+    key = _require_key()
+    url = f"{GEMINI_BASE_URL}/{EMBEDDING_MODEL}:batchEmbedContents?key={key}"
+    out: list[list[float]] = []
+
+    async with httpx.AsyncClient(timeout=_TIMEOUT) as client:
+        for start in range(0, len(texts), _EMBED_BATCH):
+            batch = texts[start : start + _EMBED_BATCH]
+            body = {
+                "requests": [
+                    {"model": f"models/{EMBEDDING_MODEL}", "content": {"parts": [{"text": t}]}}
+                    for t in batch
+                ]
+            }
+            res = await client.post(url, json=body)
+            if res.status_code != 200:
+                detail = ""
+                try:
+                    detail = res.json().get("error", {}).get("message", "")
+                except Exception:  # noqa: BLE001
+                    detail = res.text[:300]
+                raise GeminiError(f"Batch embedding error (HTTP {res.status_code}): {detail}")
+            embeddings = res.json().get("embeddings") or []
+            if len(embeddings) != len(batch):
+                raise GeminiError("Batch embedding returned the wrong number of vectors")
+            out.extend(e["values"] for e in embeddings)
+    return out
+
+
 async def generate_embeddings(texts: list[str], *, delay: float = 0.1) -> list[list[float]]:
     """Embed several strings sequentially, pacing to respect rate limits."""
     out: list[list[float]] = []

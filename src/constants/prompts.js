@@ -213,7 +213,7 @@ Structure it with these exact numbered sections:
 6. Operations Plan
 7. Financial & Sustainability Outlook
 8. Key Risks & Mitigation Strategies
-9. SDG Alignment & Impact
+9. SDG Alignment & Six Capitals Impact
 10. Conclusion & Next Steps
 
 Guidelines:
@@ -221,6 +221,7 @@ Guidelines:
 - Use bullet points where they aid clarity
 - Connect each section back to the story and evidence gathered
 - Highlight SDG alignment concretely
+- In section 9, add a "Six Capitals" part: name the primary, supporting and limited capitals (financial, manufactured, intellectual, human, social & relationship, natural), how the business builds or draws down each primary capital, and whether it is viable, equitable and bearable. Base this ONLY on the SIX CAPITALS PROFILE evidence; never upgrade a capital beyond its evidence
 - Mention specific tensions/dilemmas addressed by the model
 - Write in a professional but accessible tone (non-technical readers)
 

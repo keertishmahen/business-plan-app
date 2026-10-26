@@ -193,4 +193,10 @@ def format_rag_context(rag_context: dict[str, Any]) -> str:
         )
         sections.append(f"THIS USER'S EARLIER STEPS:\n{body}")
 
+    uploads = rag_context.get("uploads") or []
+    if uploads:
+        from ..services.rag_service import format_uploads_block  # local: keeps base import-light
+
+        sections.append(format_uploads_block(uploads))
+
     return "\n\n".join(sections)

@@ -180,6 +180,21 @@ export const TOUR_STEPS = [
   },
   {
     id: 14,
+    title: "RAG Evidence",
+    description:
+      "Before the plan is written, retrieval-augmented generation (RAG) gathers your canvas blocks, earlier steps and the SDG and framework knowledge base. Review what was found, untick anything you don't want, and the MIA agents write the plan from exactly this evidence.",
+    exampleData: {
+      bullets: [
+        "11/11 BMC blocks matched exactly by block",
+        "Earlier steps: Story, Focus, Values, SWOT…",
+        "Knowledge base: SDG 12 targets · 78% match",
+        "Each item shows which MIA agents receive it",
+      ],
+    },
+    targetStep: "rag",
+  },
+  {
+    id: 15,
     title: "Business Plan",
     description:
       "A complete, exportable business plan synthesizing everything above into a structured 10-section document. Export to Word or PDF.",

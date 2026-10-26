@@ -29,6 +29,10 @@ class Collections:
     INDUSTRY = "industry_patterns"
     USER_CONTEXT = "user_context"
     BUSINESS_PLAN = "business_plan_sections"
+    # Documents the user uploads in the RAG step; always filtered by sessionId.
+    USER_DOCS = "user_documents"
+    # Six Capitals model (Shiva's proposal): definitions, spheres, worked cases.
+    SIX_CAPITALS = "six_capitals_knowledge"
 
 
 ALL_COLLECTIONS = [
@@ -37,6 +41,8 @@ ALL_COLLECTIONS = [
     Collections.INDUSTRY,
     Collections.USER_CONTEXT,
     Collections.BUSINESS_PLAN,
+    Collections.USER_DOCS,
+    Collections.SIX_CAPITALS,
 ]
 
 _client: chromadb.ClientAPI | None = None
@@ -183,6 +189,30 @@ def query_by_metadata(
         {"id": ids[i] if i < len(ids) else "", "text": docs[i], "metadata": metas[i] if i < len(metas) else {}}
         for i in range(len(docs))
     ]
+
+
+def list_ids_where(collection_name: str, filters: dict[str, Any]) -> list[str]:
+    """Ids matching a metadata filter, without loading documents."""
+    try:
+        res = get_collection(collection_name).get(where=_to_where(filters), include=[])
+    except Exception as exc:  # noqa: BLE001
+        log.warning("Chroma id lookup on %s failed: %s", collection_name, exc)
+        return []
+    return list(res.get("ids") or [])
+
+
+def count_where(collection_name: str, filters: dict[str, Any]) -> int:
+    return len(list_ids_where(collection_name, filters))
+
+
+def delete_ids(collection_name: str, ids: list[str]) -> None:
+    """Remove documents by id; a no-op for an empty list."""
+    if not ids:
+        return
+    try:
+        get_collection(collection_name).delete(ids=ids)
+    except Exception as exc:  # noqa: BLE001
+        log.warning("Chroma delete on %s failed: %s", collection_name, exc)
 
 
 def is_relevant(distance: float) -> bool:

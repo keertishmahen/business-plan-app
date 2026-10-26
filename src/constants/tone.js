@@ -6,7 +6,7 @@
 //  make everything sound super technical."
 //
 //  The directive is appended to every generation prompt (see
-//  applyTone below), so one control steers all nine steps.
+//  applyTone below), so one control steers all ten steps.
 // ──────────────────────────────────────────────────────────────────
 
 export const TONES = [

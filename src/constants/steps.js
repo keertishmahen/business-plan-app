@@ -98,6 +98,18 @@ export const STEPS = [
     },
   },
   {
+    id: "rag",
+    label: "RAG Evidence",
+    subtitle: "What your business plan will be grounded on",
+    icon: "⧉",
+    description: "Retrieval-augmented generation (RAG) gathers your canvas blocks, earlier workflow steps and the SDG / framework knowledge base into one evidence set. Review it, keep what matters, and the MIA agents write the plan from exactly this.",
+    glimpse: {
+      outcome: "A reviewed evidence set that grounds every section of the business plan.",
+      inputs: "BMC blocks, earlier steps, and the knowledge base",
+      outputs: "Curated context passed to the MIA agents for the plan",
+    },
+  },
+  {
     id: "plan",
     label: "Business Plan",
     subtitle: "Your complete, exportable business plan",

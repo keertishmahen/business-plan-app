@@ -14,6 +14,7 @@ from typing import Any
 
 from ..services import chroma_store as store
 from ..services.gemini_client import generate_text, parse_json_response
+from ..services.rag_service import format_uploads_block
 from .base import create_fallback_result, normalize_agent_output
 
 log = logging.getLogger(__name__)
@@ -65,7 +66,7 @@ SPECIALISTS: dict[str, Specialist] = {
     "financial": Specialist(
         agent_id="financial",
         role="Financial Modeling Agent — unit economics and runway",
-        collections=[store.Collections.INDUSTRY],
+        collections=[store.Collections.INDUSTRY, store.Collections.SIX_CAPITALS],
         system_prompt=(
             "You are a Financial Modeling specialist agent in a Multi-Intelligence Agent (MIA) system.\n"
             "Your expertise covers unit economics, revenue models, cost structures, burn rate, and "
@@ -82,7 +83,11 @@ SPECIALISTS: dict[str, Specialist] = {
     "sdg": Specialist(
         agent_id="sdg",
         role="SDG Alignment Agent — mapping to UN Sustainable Development Goals",
-        collections=[store.Collections.SDGS, store.Collections.FRAMEWORKS],
+        collections=[
+            store.Collections.SDGS,
+            store.Collections.FRAMEWORKS,
+            store.Collections.SIX_CAPITALS,
+        ],
         system_prompt=(
             "You are an SDG Alignment specialist agent in a Multi-Intelligence Agent (MIA) system.\n"
             "Your expertise covers UN Sustainable Development Goals mapping, impact measurement, "
@@ -128,16 +133,19 @@ def filter_rag_context(rag_context: dict[str, Any], collections: list[str]) -> d
     """
     knowledge = (rag_context or {}).get("knowledge") or []
     history = (rag_context or {}).get("userHistory") or []
+    # The user's uploaded documents are their own evidence: every specialist
+    # gets them, unfiltered by collection.
+    uploads = (rag_context or {}).get("uploads") or []
 
     if not knowledge or not collections:
-        return {"knowledge": knowledge, "userHistory": history}
+        return {"knowledge": knowledge, "userHistory": history, "uploads": uploads}
 
     narrowed = [
         k
         for k in knowledge
         if any(k.get("source") == c or c in str(k.get("source", "")) for c in collections)
     ]
-    return {"knowledge": narrowed or knowledge, "userHistory": history}
+    return {"knowledge": narrowed or knowledge, "userHistory": history, "uploads": uploads}
 
 
 def build_agent_prompt(
@@ -161,6 +169,10 @@ def build_agent_prompt(
     if history:
         body = "\n".join(f"• [Step: {h.get('step', 'unknown')}] {h.get('text', '')}" for h in history)
         sections.append(f"=== PREVIOUS STEP OUTPUTS ===\n{body}")
+
+    uploads = (rag_context or {}).get("uploads") or []
+    if uploads:
+        sections.append(format_uploads_block(uploads))
 
     if user_story:
         sections.append(f"=== USER'S BUSINESS STORY ===\n{user_story}")

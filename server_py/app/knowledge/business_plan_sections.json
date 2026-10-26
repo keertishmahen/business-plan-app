@@ -141,18 +141,21 @@
     {
       "id": "sdg_alignment",
       "number": 9,
-      "title": "SDG Alignment & Impact",
-      "purpose": "Connect the business model to UN SDGs with evidence-based claims.",
+      "title": "SDG Alignment & Six Capitals Impact",
+      "purpose": "Connect the business model to UN SDGs with evidence-based claims, and state which of the Six Capitals (financial, manufactured, human, intellectual, social and relationship, natural) the business builds or draws down.",
       "keyQuestions": [
         "Which SDGs does the business directly support?",
         "What is the evidence for each alignment?",
-        "What social/environmental costs and benefits exist?"
+        "What social/environmental costs and benefits exist?",
+        "Which capitals are primary, supporting or limited for this business, and why?",
+        "Is the plan viable, equitable and bearable across the economic, social and environmental spheres?"
       ],
-      "exampleMetrics": ["Strong SDG alignments", "Impact indicators", "Social/environmental benefit items"],
+      "exampleMetrics": ["Strong SDG alignments", "Impact indicators", "Social/environmental benefit items", "Primary capitals and their indicators"],
       "antiHallucinationRules": [
         "Only claim strong SDG alignment with evidence from SDG mapping or BMC impact blocks",
         "Use social_environmental_cost and social_environmental_benefit BMC blocks",
-        "Avoid greenwashing — mark inferred alignments as [INFERRED]"
+        "Avoid greenwashing — mark inferred alignments as [INFERRED]",
+        "Base the Six Capitals discussion on the SIX CAPITALS PROFILE; do not upgrade a capital's emphasis beyond its evidence"
       ]
     },
     {

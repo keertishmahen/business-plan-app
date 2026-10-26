@@ -14,7 +14,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 
 from .config import CORS_ORIGIN
-from .routers import context, generate, health
+from .routers import context, generate, health, rag
 from .services.chroma_store import ensure_knowledge_seeded
 
 logging.basicConfig(
@@ -53,13 +53,14 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=_origins,
     allow_credentials="*" not in _origins,
-    allow_methods=["GET", "POST", "OPTIONS"],
+    allow_methods=["GET", "POST", "DELETE", "OPTIONS"],
     allow_headers=["*"],
 )
 
 app.include_router(health.router, prefix="/api/health", tags=["health"])
 app.include_router(generate.router, prefix="/api/generate", tags=["generate"])
 app.include_router(context.router, prefix="/api/context", tags=["context"])
+app.include_router(rag.router, prefix="/api/rag", tags=["rag"])
 
 
 @app.get("/")
@@ -71,5 +72,11 @@ async def root():
             "POST /api/generate",
             "POST /api/generate/stream",
             "POST /api/context/store",
+            "POST /api/rag/retrieve",
+            "POST /api/rag/suggest",
+            "POST /api/rag/capitals",
+            "POST /api/rag/upload",
+            "GET  /api/rag/documents",
+            "DELETE /api/rag/documents/{docId}",
         ],
     }

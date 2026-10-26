@@ -10,6 +10,7 @@ const WORKFLOW_TARGETS = [
   "values",
   "swot",
   "bmc",
+  "rag",
   "plan",
 ];
 
@@ -80,7 +81,7 @@ describe("useTour", () => {
     expect(result.current.stepData).toEqual(TOUR_STEPS[1]);
   });
 
-  it("includes intro/DTM slides then all 9 workflow targets", () => {
+  it("includes intro/DTM slides then all 10 workflow targets", () => {
     expect(TOUR_STEPS.length).toBeGreaterThanOrEqual(14);
     const workflowTargets = TOUR_STEPS.map((s) => s.targetStep).filter(Boolean);
     expect(workflowTargets).toEqual(WORKFLOW_TARGETS);

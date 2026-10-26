@@ -1,0 +1,65 @@
+{
+  "source": "Ashtari, S. MS Thesis Proposal (Systems Realization Laboratory, University of Oklahoma, 2026), drawing on Porritt (2020) The Five Capitals, The International <IR> Framework (2021) and Herremans (2020) Sustainability Performance and Reporting.",
+  "documents": [
+    {
+      "id": "six_capitals_overview",
+      "title": "Six Capitals model - overview",
+      "text": "The Six Capitals model explains capitalism as a system that uses and develops different forms of capital over time. Financial capital is only one part of value creation; long-term success depends on how the other capitals are supported and maintained. The six capitals are financial, manufactured, human, intellectual, social and relationship, and natural capital. Modern capitalism is about balancing and sustaining these capitals rather than maximising short-term profit: an economic activity is successful when it maintains financial and manufactured capital while also strengthening human and social resources and protecting natural systems. This aligns with the Sustainable Development Goals and supports long-term value creation in Evolving Cyber-Physical-Social Systems (E-CPSS). A business plan should state which capitals it mainly builds, which it draws down, and how it keeps them in balance."
+    },
+    {
+      "id": "capital_financial",
+      "title": "Financial capital",
+      "text": "Financial capital: money and near-cash resources that can be invested to support activities and to develop the other forms of capital. Sphere: economic. Evidence in the Business Model Canvas: revenue_streams, cost_structure, pricing, funding, investment and grants. Example indicators: revenue, margin, cash runway, cost per unit served, investment attracted, payback period, share of income reinvested in other capitals. Questions: How is the venture funded and how stable is that funding? Is money the goal or a tool to sustain social and environmental impact? What happens to the plan if funding is delayed or demand drops?"
+    },
+    {
+      "id": "capital_manufactured",
+      "title": "Manufactured capital",
+      "text": "Manufactured capital: physical assets such as buildings, equipment, devices and infrastructure used to produce or deliver goods and services. Sphere: economic. Evidence in the Business Model Canvas: key_resources (equipment, sites, devices, infrastructure), channels (physical delivery), key_activities that operate assets, and cost_structure items for capital expenditure and maintenance. Example indicators: installed capacity, uptime and reliability, asset utilisation, maintenance cost, asset lifetime. Questions: Which physical assets does the value proposition depend on? Who owns and maintains them? How fragile are they to supply-chain or price shocks?"
+    },
+    {
+      "id": "capital_human",
+      "title": "Human capital",
+      "text": "Human capital: people's knowledge, skills, experience, health and motivation. Sphere: social. Evidence in the Business Model Canvas: key_activities that depend on people, key_resources such as staff, volunteers and local workers, training, local employment, and benefits to well-being and health in social_environmental_benefit. Example indicators: jobs created, local hires, people trained, skills gained, health and safety outcomes, staff retention. Questions: Whose skills does the business rely on and develop? Does it create decent local work? Does it improve people's health, safety or well-being?"
+    },
+    {
+      "id": "capital_intellectual",
+      "title": "Intellectual capital",
+      "text": "Intellectual capital: knowledge, innovation, data, intellectual property, systems and the results of research and development. It supports all three spheres (social, environmental and economic) by enabling learning, innovation and improvement, and is grouped with the economic sphere in the Six Capitals mapping. Evidence in the Business Model Canvas: value_propositions built on a novel method, technology, data or know-how; key_resources such as software, data platforms, patents, models and expertise; key_activities such as R&D and analytics. Example indicators: proprietary data or methods, patents, research partnerships, insights produced, improvement cycles. Questions: What knowledge or technology makes this hard to copy? How does the venture learn and improve from data and feedback?"
+    },
+    {
+      "id": "capital_social_relationship",
+      "title": "Social and relationship capital",
+      "text": "Social and relationship capital: trust, shared values, cooperation and relationships among stakeholders that support collaboration and social acceptance (licence to operate). Sphere: social. Evidence in the Business Model Canvas: key_partners (communities, councils, NGOs, clinicians, suppliers), customer_relationships, customer_segments that are underserved, channels based on community trust, and fair sharing of benefits in social_environmental_benefit. Example indicators: active partnerships, community participation, customer trust and retention, stakeholder satisfaction, equitable access. Questions: Which relationships make the model work? Are benefits shared fairly? Would the community accept and defend this venture?"
+    },
+    {
+      "id": "capital_natural",
+      "title": "Natural capital",
+      "text": "Natural capital: resources from the planet such as air, water, land, energy, materials and ecosystems that enable production and support life. Sphere: environmental. Evidence in the Business Model Canvas: social_environmental_cost (emissions, waste, water and land use, pollution) and social_environmental_benefit (pollution avoided, renewable energy, resources conserved), plus key_resources that are natural inputs. Example indicators: emissions avoided, energy and water use, waste diverted, renewable share, land and biodiversity impact. Questions: Which natural resources does the business draw down or restore? Are environmental costs measured and reduced, or only claimed (greenwashing)?"
+    },
+    {
+      "id": "capitals_spheres_mapping",
+      "title": "Six Capitals mapped to the three spheres of sustainability",
+      "text": "The Six Capitals relate to the three spheres of sustainability. Social sphere: human capital and social and relationship capital. Environmental sphere: natural capital. Economic sphere: financial capital and manufactured capital, with intellectual capital alongside them; intellectual capital also supports all three spheres by enabling learning, innovation and improvement. Sustainable value creation requires balance across multiple capitals, not the maximisation of one."
+    },
+    {
+      "id": "spheres_viable_equitable_bearable",
+      "title": "Viable, equitable and bearable outcomes",
+      "text": "The overlaps of the three spheres define a sustainable solution. Viable = economic and environmental: the activity works for the business and the environment and can continue over time (e.g. energy efficiency, incentives for use of natural resources, low running costs with local resources). Equitable = economic and social: the activity is fair to people while supporting the economy (business ethics, fair trade, workers' rights, benefits and jobs shared fairly, affordable to users). Bearable = social and environmental: the activity is acceptable for society and nature (environmental justice, natural resource stewardship locally and globally, fits local needs without harming the environment or daily life). A valid sustainable business plan explains how it is viable, equitable and bearable at the same time."
+    },
+    {
+      "id": "case_chhotkei_smart_village",
+      "title": "Worked example - Chhotkei smart village (social domain)",
+      "text": "Chhotkei is a smart village project in India for rural development and community services (water, energy, local employment). Primary capitals: human capital (local skills, employment, community participation) and social and relationship capital (trust, cooperation, shared local services). Supporting: natural capital (responsible use of water, energy and land) and manufactured capital (basic infrastructure and service systems). Financial capital is used mainly to keep services running rather than to maximise profit; intellectual capital plays a limited role. Capitalism is used as a tool rather than a goal. Valid when services continue with low costs and local resources (viable), benefits and jobs are shared fairly (equitable), and solutions fit local needs without harming the environment or daily life (bearable)."
+    },
+    {
+      "id": "case_foot_health_monitoring",
+      "title": "Worked example - Foot health monitoring for children with Cerebral Palsy (social domain)",
+      "text": "A wearable pressure-sensing system integrated with ankle-foot orthoses that gives caregivers real-time feedback and lets clinicians monitor usage, planned as a health monitoring service rather than a standalone device. Primary capitals: human capital (children's health, safety and well-being) and intellectual capital (medical knowledge, data interpretation, system design). Supporting: social and relationship capital (trust and coordination among caregivers, clinicians and families) and manufactured capital (wearables, orthotic components). Financial capital supports long-term operation and affordability rather than profit; natural capital has limited relevance. A mixed form of capitalism. Valid when the service continues at reasonable cost (viable), families can use it without heavy financial pressure (equitable), and it is safe and acceptable for children and caregivers with little environmental harm (bearable)."
+    },
+    {
+      "id": "case_shidokht_solar_energy",
+      "title": "Worked example - Shidokht grid-connected solar energy, Yazd (economic domain)",
+      "text": "A grid-connected solar power service in Meybod, Yazd, Iran addressing electricity shortages that cut factory output and raise business costs. Primary capitals: financial capital (investment, returns, cost stability) and manufactured capital (solar panels, grid connections, energy infrastructure). Natural capital is also important: it relies on renewable solar resources and reduces environmental harm. Supporting: social and relationship capital (job stability, reliable energy for businesses and workers); human and intellectual capital play supporting roles. Capitalism focuses on economic value creation shaped by environmental and social limits. Valid when it attracts investment and provides reliable electricity over time (viable), economic benefits reach both businesses and workers (equitable), and renewable energy reduces pollution (bearable)."
+    }
+  ]
+}

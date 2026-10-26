@@ -10,14 +10,14 @@ export const TOOLTIP_CONTENT = {
   //  Onboarding capability tooltips ("What I can do" section)
   // ──────────────────────────────────────────────────────────────────
   "guide-9-steps":
-    "The co-pilot walks you through 9 structured steps — from describing your idea to producing a complete, exportable business plan. Each step builds on the last so nothing gets missed.",
+    "The co-pilot walks you through 10 structured steps — from describing your idea to producing a complete, exportable business plan. Each step builds on the last so nothing gets missed.",
   "generate-sdg":
     "Content is aligned with the UN Sustainable Development Goals (SDGs). The system maps your idea to the relevant global goals so your plan reflects real-world impact.",
   "identify-tensions":
     "The system finds where your goals might conflict — for example, faster growth vs. lower carbon footprint — and helps you prioritise which trade-offs to resolve first.",
 
   // ──────────────────────────────────────────────────────────────────
-  //  Workflow step tooltips (all 9 steps)
+  //  Workflow step tooltips (all 10 steps)
   // ──────────────────────────────────────────────────────────────────
   "step-story":
     "Describe your business idea in your own words. The more context you share — your goals, who you serve, the problems you're solving — the better your plan will be.",
@@ -35,6 +35,8 @@ export const TOOLTIP_CONTENT = {
     "All value propositions compared side by side with Strengths, Weaknesses, Opportunities, and Threats. Review the AI recommendation, then select the path you want to build on.",
   "step-bmc":
     "Expanded Business Model Canvas — an 11-block template covering the standard canvas plus Social and Environmental Cost and Benefit blocks for SDG-aligned impact analysis.",
+  "step-rag":
+    "Retrieval-augmented grounding — see exactly which Business Model Canvas blocks, earlier steps and knowledge-base sources the MIA agents will use to write your plan, and exclude anything you don't want.",
   "step-plan":
     "A full 10-section business plan synthesising everything above. You can export it to Word or PDF when you're ready.",
 

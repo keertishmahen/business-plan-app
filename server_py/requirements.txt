@@ -6,3 +6,8 @@ httpx==0.28.1
 # a C++ toolchain to build on Windows / Python 3.13.
 chromadb>=1.0.0,<2.0.0
 python-dotenv==1.0.1
+# RAG step knowledge uploads: PDF / DOCX text extraction and multipart forms.
+# Deliberately no torch / sentence-transformers — embeddings stay on Gemini.
+pypdf==6.19.0  # 6.x: FlateDecode decompression limits (PDF bomb protection)
+python-docx==1.1.2
+python-multipart==0.0.20

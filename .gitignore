@@ -16,3 +16,8 @@ venv/
 server_py/chroma/
 server_py/.venv/
 server_py/.env
+
+# Private documents and local logs — never publish (repo is public)
+/*.pdf
+build_output.txt
+debug.log

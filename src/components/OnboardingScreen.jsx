@@ -120,7 +120,7 @@ const PROBLEMS = [
 ];
 
 const WITH_SYMETRA = [
-  "Structured 9-step path",
+  "Structured 10-step path",
   "Tension spotting as you go",
   "SDG-aware prompts",
   "Editable, exportable outputs",

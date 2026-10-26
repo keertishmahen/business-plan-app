@@ -12,6 +12,7 @@ import ValuesStep       from "./components/steps/ValuesStep";
 import SwotStep         from "./components/steps/SwotStep";
 import BMCStep          from "./components/steps/BMCStep";
 import BusinessPlanStep from "./components/steps/BusinessPlanStep";
+import RagStep, { getCuratedContext } from "./components/steps/RagStep";
 import FeedbackBar      from "./components/shared/FeedbackBar";
 import FeedbackAcknowledgment from "./components/shared/FeedbackAcknowledgment";
 import LoadingState     from "./components/shared/LoadingState";
@@ -31,7 +32,7 @@ import { resolveSpecialistStatus, isSpecialistAgent, shouldLogSpecialistStageEve
 import { PROMPTS }      from "./constants/prompts";
 import { applyTone, DEFAULT_TONE } from "./constants/tone";
 import { callGemini, parseGeminiJSON, setApiKey } from "./utils/gemini";
-import { callRAG, storeStepOutput, callMultiAgentStream, shouldUseMultiAgent, isRAGAvailable, isServerManaged } from "./services/geminiClient";
+import { callRAG, storeStepOutput, retrieveRagContext, analyzeSixCapitals, suggestRagSources, uploadRagDocuments, listRagDocuments, deleteRagDocument, callMultiAgentStream, shouldUseMultiAgent, isRAGAvailable, isServerManaged } from "./services/geminiClient";
 import useWorkflow, { STEP_ORDER } from "./hooks/useWorkflow";
 import useLocalStorage  from "./hooks/useLocalStorage";
 import useHistorySync, { goBackOr } from "./hooks/useHistorySync";
@@ -292,6 +293,10 @@ export default function App() {
 
   // Local state for things not in the workflow reducer
   const [selectedSwotTitle, setSelectedSwotTitle] = useState("");
+  const [ragBusy, setRagBusy] = useState(false);
+  // Always the current RAG step output, for merges that finish after awaits.
+  const ragOutputRef = useRef(null);
+  ragOutputRef.current = state.outputs.rag;
   // Output register for generated content (capstone feedback #1).
   const [tone, setTone] = useState(DEFAULT_TONE);
 
@@ -503,7 +508,7 @@ export default function App() {
   const executeGeneration = useCallback(async (sid, rawPrompt) => {
     const useMIA = shouldUseMultiAgent(sid);
     const swotEntry = state.outputs.swot?.swot?.find((s) => s.title === selectedSwotTitle) || null;
-    // Tone is applied centrally so a single control steers all nine steps
+    // Tone is applied centrally so a single control steers all ten steps
     // (capstone feedback #1 — output read as "posh and uptight").
     const prompt = applyTone(rawPrompt, tone);
     const genOptions = {
@@ -517,6 +522,11 @@ export default function App() {
         tone,
       },
     };
+    // The plan is grounded on exactly the evidence approved in the RAG step;
+    // the MIA agents receive it as their retrieval context.
+    if (sid === "plan" && state.outputs.rag) {
+      genOptions.options.curatedContext = getCuratedContext(state.outputs.rag);
+    }
 
     if (useMIA) {
       const activeIds = getActiveAgents(sid);
@@ -545,7 +555,7 @@ export default function App() {
     }
 
     return callRAG(prompt, genOptions);
-  }, [sessionId, state.story, state.outputs.swot, selectedSwotTitle, tone, handleAgentProgress, initMiaAgents, setAgentMetadata, resetAgentState, dispatch]);
+  }, [sessionId, state.story, state.outputs.swot, state.outputs.rag, selectedSwotTitle, tone, handleAgentProgress, initMiaAgents, setAgentMetadata, resetAgentState, dispatch]);
 
   const generateSdgMapping = useCallback(async (outputsOverride) => {
     const outputs = outputsOverride || state.outputs;
@@ -583,8 +593,126 @@ export default function App() {
     }
   }, [state.story, state.outputs, sessionId, setOutput]);
 
+  // ── RAG step: sync every output, then retrieve the plan's evidence ──
+  // Re-storing first means canvas edits and resumed sessions (new sessionId)
+  // are reflected, and BMC is guaranteed stored before it is looked up.
+  // `quiet` keeps the step mounted (no global loading screen) when re-running
+  // after an upload or delete; `resync` skips re-storing unchanged outputs.
+  const runRagRetrieval = useCallback(async ({ resync = true, quiet = false, afterDelete = false, reassess = false } = {}) => {
+    if (!quiet) setWorkflowLoading(true);
+    setWorkflowError(null);
+    const prevRag = ragOutputRef.current || {};
+    try {
+      if (resync) {
+        const writes = [storeStepOutput(sessionId, "story", state.story)];
+        STEP_ORDER.forEach((sid) => {
+          if (sid === "story" || sid === "rag" || sid === "plan") return;
+          if (state.outputs[sid]) writes.push(storeStepOutput(sessionId, sid, state.outputs[sid]));
+        });
+        if (state.outputs.sdg_mapping) {
+          writes.push(storeStepOutput(sessionId, "sdg_mapping", state.outputs.sdg_mapping));
+        }
+        await Promise.all(writes);
+      }
+
+      // Six Capitals profile (proposal requirement 9). It runs before retrieval
+      // because the server stores it as evidence that retrieval then returns.
+      // Cached against the canvas, so editing the BMC triggers a re-assessment.
+      const bmcKey = JSON.stringify(state.outputs.bmc || null);
+      let capitals = prevRag.capitals || null;
+      let capitalsError = null;
+      if (state.outputs.bmc && (reassess || !capitals || prevRag.capitalsKey !== bmcKey)) {
+        try {
+          capitals = await analyzeSixCapitals(sessionId, {
+            bmc: state.outputs.bmc,
+            story: state.story,
+            selectedVpTitle: selectedSwotTitle || "",
+          });
+        } catch (e) {
+          capitalsError = e.message || "unavailable";
+          if (reassess) capitals = prevRag.capitals || null;
+        }
+      }
+
+      // Upload suggestions are generated once per session and cached, unlike the
+      // SunMoksha reference which regenerated them on every rerun.
+      const needSuggestions = !prevRag.suggestions?.length && state.outputs.bmc;
+      const [result, documents, suggestions] = await Promise.all([
+        retrieveRagContext(sessionId, {
+          selectedVpTitle: selectedSwotTitle || "",
+          prompt: `Business plan for: ${String(state.story || "").slice(0, 300)}`,
+        }),
+        listRagDocuments(sessionId).catch(() => prevRag.documents || []),
+        needSuggestions
+          ? suggestRagSources(sessionId, { bmc: state.outputs.bmc, story: state.story }).catch(() => null)
+          : Promise.resolve(prevRag.suggestions || []),
+      ]);
+
+      // Keep earlier exclusions for items that were retrieved again. Read the
+      // latest RAG output (not the one captured before the awaits) so a toggle
+      // made while this request was in flight is not reverted.
+      const latestRag = ragOutputRef.current || prevRag;
+      const ids = new Set(
+        [...result.bmcBlocks, ...result.priorSteps, ...(result.uploads || []), ...result.knowledge].map((i) => i.id)
+      );
+      const excluded = (latestRag.excluded || []).filter((id) => ids.has(id));
+      const output = {
+        ...result,
+        excluded,
+        documents,
+        suggestions: suggestions || [],
+        suggestionsError: suggestions === null,
+        capitals,
+        capitalsError,
+        capitalsKey: capitals ? bmcKey : null,
+        // The server's per-session store is wiped on restart; tell the user
+        // rather than silently planning without their documents.
+        uploadsLost: !afterDelete && (prevRag.documents || []).length > 0 && documents.length === 0,
+      };
+      setOutput("rag", output);
+      if (!quiet) setWorkflowLoading(false);
+      return output;
+    } catch (e) {
+      setWorkflowError(`RAG retrieval failed: ${e.message}`);
+      if (!quiet) setWorkflowLoading(false);
+      return null;
+    }
+  }, [sessionId, state.story, state.outputs, selectedSwotTitle, setOutput, setWorkflowLoading, setWorkflowError]);
+
+  // While an upload/delete and its follow-up retrieval run, the evidence
+  // toggles, Re-run and Approve are locked so nothing races the refresh.
+  const handleRagUpload = useCallback(async ({ files, text }) => {
+    setRagBusy(true);
+    try {
+      await uploadRagDocuments(sessionId, { files, text });
+      await runRagRetrieval({ resync: false, quiet: true });
+    } finally {
+      setRagBusy(false);
+    }
+  }, [sessionId, runRagRetrieval]);
+
+  const handleRagDelete = useCallback(async (docId) => {
+    setRagBusy(true);
+    try {
+      await deleteRagDocument(sessionId, docId);
+    } catch (e) {
+      // Already gone (server restart, or a resumed session with a new id):
+      // refresh the list instead of leaving a Remove button that always fails.
+      if (!/not found/i.test(e.message || "")) {
+        setRagBusy(false);
+        throw e;
+      }
+    }
+    try {
+      await runRagRetrieval({ resync: false, quiet: true, afterDelete: true });
+    } finally {
+      setRagBusy(false);
+    }
+  }, [sessionId, runRagRetrieval]);
+
   // ── Generate for a given step (Task 16.4) ─────────────────────
   const generate = useCallback(async (sid, opts = {}) => {
+    if (sid === "rag") return runRagRetrieval();
     setWorkflowLoading(true);
     setWorkflowError(null);
     try {
@@ -656,7 +784,7 @@ export default function App() {
       return null;
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [effectiveApiKey, state.story, state.outputs, selectedSwotTitle, stepMeta, executeGeneration, dispatch, generateSdgMapping]);
+  }, [effectiveApiKey, state.story, state.outputs, selectedSwotTitle, stepMeta, executeGeneration, dispatch, generateSdgMapping, runRagRetrieval]);
 
   // ── Story submitted → transition to workflow phase ─────────────
   async function handleStorySubmit(text) {
@@ -749,6 +877,10 @@ export default function App() {
   // Helper that generates for a specific step with latest state
   // Uses RAG backend for context-enriched generation (especially BMC → Plan)
   async function generateForStep(sid) {
+    if (sid === "rag") {
+      await runRagRetrieval();
+      return;
+    }
     setWorkflowLoading(true);
     setWorkflowError(null);
     try {
@@ -953,6 +1085,7 @@ export default function App() {
   const showFeedbackDock = !state.loading
     && hasOutput
     && state.currentStep !== "plan"
+    && state.currentStep !== "rag"
     && state.currentStep !== "story";
 
   const sdgAlignments = mergeSdgAlignments(
@@ -1106,6 +1239,18 @@ export default function App() {
                 <BMCStep
                   data={normalizedBmcData || state.outputs.bmc}
                   onEdit={(updated) => setOutput("bmc", updated)}
+                />
+              )}
+              {state.currentStep === "rag" && (
+                <RagStep
+                  data={state.outputs.rag}
+                  onChange={(updated) => setOutput("rag", updated)}
+                  onRerun={() => runRagRetrieval()}
+                  onUpload={handleRagUpload}
+                  onDeleteDocument={handleRagDelete}
+                  onReassessCapitals={() => runRagRetrieval({ resync: false, reassess: true })}
+                  onApprove={handleApprove}
+                  loading={state.loading || ragBusy}
                 />
               )}
               {state.currentStep === "plan" && (

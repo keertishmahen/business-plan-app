@@ -40,6 +40,13 @@ async def store_context(req: StoreRequest):
         # because the plan step retrieves blocks by metadata rather than by vector.
         if req.chunked or req.stepId == "bmc":
             stored = await store_step_output(req.sessionId, req.stepId, req.content)
+            if stored == 0:
+                # Content was non-empty, so nothing stored means embedding failed;
+                # say so instead of a misleading 200 the client treats as success.
+                return JSONResponse(
+                    status_code=502,
+                    content={"error": "Could not embed step output (embedding service failed)"},
+                )
             return {"stored": stored, "chunked": True}
 
         text = req.content if isinstance(req.content, str) else str(req.content)

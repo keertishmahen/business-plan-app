@@ -3,7 +3,7 @@ import { sanitizeAgentMetadata, sanitizeSpecialistData } from "../utils/agentTex
 import { ALL_AGENT_IDS } from "../constants/agents";
 
 /**
- * The fixed 9-step sequence for the workflow.
+ * The fixed 10-step sequence for the workflow.
  */
 export const STEP_ORDER = [
   "story",
@@ -14,6 +14,7 @@ export const STEP_ORDER = [
   "values",
   "swot",
   "bmc",
+  "rag",
   "plan",
 ];
 
@@ -324,7 +325,7 @@ export function workflowReducer(state, action) {
 }
 
 /**
- * useWorkflow — manages the 9-step business plan co-creation workflow.
+ * useWorkflow — manages the 10-step business plan co-creation workflow.
  *
  * Returns the current state and a dispatch function.
  * Also provides convenience action creators.

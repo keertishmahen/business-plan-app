@@ -14,8 +14,8 @@ describe("workflowReducer", () => {
   });
 
   describe("STEP_ORDER", () => {
-    it("contains exactly 9 steps in fixed order", () => {
-      expect(STEP_ORDER).toHaveLength(9);
+    it("contains exactly 10 steps in fixed order", () => {
+      expect(STEP_ORDER).toHaveLength(10);
       expect(STEP_ORDER).toEqual([
         "story",
         "focus",
@@ -25,6 +25,7 @@ describe("workflowReducer", () => {
         "values",
         "swot",
         "bmc",
+        "rag",
         "plan",
       ]);
     });
@@ -78,16 +79,16 @@ describe("workflowReducer", () => {
       expect(result.currentStep).toBe("plan");
     });
 
-    it("advances through all 9 steps sequentially", () => {
+    it("advances through all 10 steps sequentially", () => {
       let state = { ...initialState };
-      for (let i = 0; i < 8; i++) {
+      for (let i = 0; i < STEP_ORDER.length - 1; i++) {
         state = workflowReducer(state, { type: "COMPLETE_STEP" });
         expect(state.currentStep).toBe(STEP_ORDER[i + 1]);
       }
       // Final step stays in place
       state = workflowReducer(state, { type: "COMPLETE_STEP" });
       expect(state.currentStep).toBe("plan");
-      expect(state.completedSteps).toHaveLength(9);
+      expect(state.completedSteps).toHaveLength(10);
     });
 
     it("story submit sequence lands on focus without skipping it", () => {

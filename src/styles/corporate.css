@@ -1483,7 +1483,9 @@
 .swot-compare-grid {
   min-width: min(100%, 640px);
   display: grid;
-  grid-template-columns: 120px repeat(var(--swot-cols, 2), minmax(180px, 1fr));
+  /* Label column sizes to its longest label: a fixed 120px let the single
+     word "OPPORTUNITIES" (icon + uppercase + tracking) spill into column 1. */
+  grid-template-columns: minmax(150px, max-content) repeat(var(--swot-cols, 2), minmax(180px, 1fr));
   gap: 0;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
@@ -1507,6 +1509,8 @@
   display: flex;
   align-items: center;
   gap: 6px;
+  white-space: nowrap;
+  min-width: 0;
 }
 
 .swot-compare-row-label__icon {
@@ -2274,3 +2278,163 @@
   flex-shrink: 0;
 }
 
+
+/* ── RAG Evidence step (between BMC and Business Plan) ───────────── */
+.rag-step { display: flex; flex-direction: column; gap: 20px; }
+
+.rag-coverage {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 12px;
+  padding: 16px;
+  border-radius: var(--radius-lg);
+}
+.rag-coverage__stat { display: flex; flex-direction: column; gap: 2px; }
+.rag-coverage__stat strong { font-size: 22px; color: var(--color-brand); font-variant-numeric: tabular-nums; }
+.rag-coverage__stat span { font-size: 12px; color: var(--color-text-secondary); }
+
+.rag-warning {
+  padding: 12px 14px;
+  border-radius: var(--radius-md);
+  background: var(--color-warning-light);
+  color: var(--color-warning);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.rag-section__title { font-size: 15px; font-weight: 600; margin: 0 0 4px; color: var(--color-text-primary); }
+.rag-section__count {
+  display: inline-block; min-width: 22px; padding: 0 7px; margin-left: 6px;
+  border-radius: var(--radius-pill); background: var(--color-brand-light);
+  color: var(--color-brand); font-size: 12px; text-align: center;
+}
+.rag-section__hint, .rag-section__empty { font-size: 12px; color: var(--color-text-muted); margin: 0 0 10px; }
+
+.rag-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.rag-item {
+  padding: 12px 14px;
+  border: 1px solid var(--color-border-mid);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+}
+.rag-item--excluded { opacity: 0.5; }
+.rag-item--excluded .rag-item__text { text-decoration: line-through; }
+.rag-item__head { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; cursor: pointer; }
+.rag-item__head input { accent-color: var(--color-brand); width: 16px; height: 16px; }
+.rag-item__title { font-weight: 600; font-size: 13px; color: var(--color-text-primary); }
+.rag-item__meta { font-size: 11px; color: var(--color-text-muted); margin-left: auto; }
+.rag-item__text {
+  margin: 6px 0 0 24px; font-size: 13px; line-height: 1.5;
+  color: var(--color-text-secondary); overflow-wrap: anywhere;
+}
+.rag-item__agents { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; margin: 8px 0 0 24px; }
+.rag-item__agents-label { font-size: 11px; color: var(--color-text-muted); }
+.rag-chip {
+  font-size: 11px; padding: 1px 8px; border-radius: var(--radius-pill);
+  background: var(--color-accent-light); color: var(--color-accent);
+}
+
+.rag-actions { display: flex; gap: 12px; justify-content: flex-end; flex-wrap: wrap; }
+.rag-actions button { padding: 10px 22px; font-size: 14px; }
+
+/* ── RAG step: "Add your own knowledge" upload panel ─────────────── */
+.rag-upload {
+  padding: 16px;
+  border: 1px dashed var(--color-border-mid);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+}
+.rag-upload__suggest {
+  margin: 10px 0 14px;
+  padding: 12px 14px;
+  border-radius: var(--radius-md);
+  background: var(--color-brand-light);
+}
+.rag-upload__suggest-title { margin: 0 0 6px; font-size: 13px; font-weight: 600; color: var(--color-brand); }
+.rag-upload__suggest-list { margin: 0; padding-left: 18px; font-size: 13px; line-height: 1.55; color: var(--color-text-secondary); }
+.rag-upload__examples { color: var(--color-text-muted); }
+.rag-upload__inputs { display: flex; flex-direction: column; gap: 6px; }
+.rag-upload__label { font-size: 12px; font-weight: 600; color: var(--color-text-secondary); margin-top: 6px; }
+.rag-upload__file { font-size: 13px; max-width: 100%; }
+.rag-upload__text {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 12px;
+  font: inherit;
+  font-size: 13px;
+  border: 1px solid var(--color-border-mid);
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.85);
+  resize: vertical;
+}
+.rag-upload__error { margin: 8px 0 0; font-size: 13px; color: var(--color-danger); }
+.rag-actions--start { justify-content: flex-start; margin-top: 12px; }
+.rag-upload__docs { list-style: none; margin: 12px 0 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.rag-upload__doc {
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  padding: 8px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.7);
+}
+.rag-upload__doc-name { font-size: 13px; font-weight: 600; color: var(--color-text-primary); overflow-wrap: anywhere; }
+.rag-upload__doc .rag-item__meta { margin-left: 0; }
+.rag-upload__remove {
+  margin-left: auto;
+  padding: 3px 10px;
+  font-size: 12px;
+  border: 1px solid var(--color-border-mid);
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--color-danger);
+  cursor: pointer;
+}
+.rag-upload__remove:disabled { opacity: 0.5; cursor: default; }
+
+/* ── RAG step: Six Capitals profile (sphere colours = People/Planet/Prosperity) ── */
+.caps {
+  padding: 16px;
+  border: 1px solid var(--color-border-mid);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+}
+.caps__header { display: flex; align-items: center; gap: 10px; }
+.caps__reassess { color: var(--color-brand); }
+.caps__summary { margin: 4px 0 12px; font-size: 13px; line-height: 1.55; color: var(--color-text-secondary); }
+.caps__grid {
+  list-style: none; margin: 0; padding: 0;
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px;
+}
+.caps-tile {
+  --caps-accent: var(--color-prosperity);
+  --caps-tint: var(--color-prosperity-light);
+  padding: 12px;
+  border: 1px solid var(--color-border);
+  border-top: 4px solid var(--caps-accent);
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.8);
+  min-width: 0;
+}
+.caps-tile--social { --caps-accent: var(--color-people); --caps-tint: var(--color-people-light); }
+.caps-tile--environmental { --caps-accent: var(--color-planet); --caps-tint: var(--color-planet-light); }
+.caps-tile--primary { background: var(--caps-tint); }
+.caps-tile--limited { opacity: 0.75; }
+.caps-tile__head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.caps-tile__name { font-weight: 700; font-size: 14px; color: var(--color-text-primary); }
+.caps-tile__meta { display: flex; align-items: center; justify-content: space-between; margin: 6px 0; }
+.caps-tile__sphere { font-size: 11px; font-weight: 600; color: var(--caps-accent); text-transform: uppercase; letter-spacing: 0.04em; }
+.caps-tile__text { margin: 0; font-size: 12.5px; line-height: 1.5; color: var(--color-text-secondary); overflow-wrap: anywhere; }
+.caps-tile__evidence { margin: 6px 0 0; padding-left: 16px; font-size: 11.5px; color: var(--color-text-muted); line-height: 1.45; overflow-wrap: anywhere; }
+.caps-tile__risk { margin: 6px 0 0; font-size: 11.5px; color: var(--color-warning); }
+.caps-badge { font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: var(--radius-pill); white-space: nowrap; }
+.caps-badge--primary { background: var(--caps-accent); color: #fff; }
+.caps-badge--supporting { background: var(--caps-tint); color: var(--caps-accent); }
+.caps-badge--limited { background: var(--color-border); color: var(--color-text-muted); }
+.caps-score { display: inline-flex; gap: 3px; }
+.caps-score__pip { width: 10px; height: 6px; border-radius: 2px; background: var(--color-border-mid); }
+.caps-score__pip--on { background: var(--caps-accent); }
+.caps__spheres { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; margin-top: 12px; }
+.caps__sphere { padding: 10px 12px; border-radius: var(--radius-md); background: var(--color-brand-light); }
+.caps__sphere strong { font-size: 13px; color: var(--color-brand); }
+.caps__sphere-hint { margin-left: 6px; font-size: 11px; color: var(--color-text-muted); }
+.caps__sphere p { margin: 4px 0 0; font-size: 12.5px; line-height: 1.5; color: var(--color-text-secondary); }

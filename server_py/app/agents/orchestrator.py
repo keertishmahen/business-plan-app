@@ -236,7 +236,14 @@ async def orchestrate(
     await _emit(on_progress, "stage", {"name": "context-retrieval", "status": "running"})
     stage = _push_stage(stages, "context-retrieval", "running")
     rag_context = await retrieve_context(
-        prompt, step_id, session_id, {"selectedVpTitle": options.get("selectedVpTitle", "")}
+        prompt,
+        step_id,
+        session_id,
+        {
+            "selectedVpTitle": options.get("selectedVpTitle", ""),
+            # Evidence the user approved in the RAG step (plan only).
+            "curatedContext": options.get("curatedContext"),
+        },
     )
     stage["status"] = "complete"
     await _emit(on_progress, "stage", {"name": "context-retrieval", "status": "complete"})

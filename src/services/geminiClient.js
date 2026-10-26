@@ -227,13 +227,13 @@ export async function callRAG(prompt, { stepId, sessionId, userStory, options = 
  * Uses chunked storage for structured steps (BMC blocks, plan sections).
  */
 export async function storeStepOutput(sessionId, stepId, content, metadata = {}) {
-  if (content == null || content === "") return;
+  if (content == null || content === "") return false;
 
   const payload =
     typeof content === "string" ? content : JSON.stringify(content, null, 2);
 
   try {
-    await fetch(`${getRagBaseUrl()}/api/context/store`, {
+    const res = await fetch(`${getRagBaseUrl()}/api/context/store`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -244,9 +244,109 @@ export async function storeStepOutput(sessionId, stepId, content, metadata = {})
         chunked: true,
       }),
     });
+    if (!res.ok) {
+      console.warn(`[RAG] Storing ${stepId} failed: HTTP ${res.status}`);
+      return false;
+    }
+    return true;
   } catch (error) {
     console.warn("[RAG] Failed to store step output:", error.message);
+    return false;
   }
+}
+
+/**
+ * The standalone RAG step: fetch the evidence the business plan will be
+ * grounded on (BMC blocks, earlier steps, knowledge base) without generating.
+ * @returns {Promise<{bmcBlocks: object[], priorSteps: object[], knowledge: object[], coverageReport: object, sources: string[], agentRouting: object}>}
+ */
+export async function retrieveRagContext(sessionId, { selectedVpTitle = "", prompt = "" } = {}) {
+  const res = await fetch(`${getRagBaseUrl()}/api/rag/retrieve`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ sessionId, selectedVpTitle, prompt }),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.error || `RAG retrieval failed: HTTP ${res.status}`);
+  }
+  return res.json();
+}
+
+async function ragRequest(path, init, fallbackMessage) {
+  const res = await fetch(`${getRagBaseUrl()}${path}`, init);
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.error || `${fallbackMessage}: HTTP ${res.status}`);
+  }
+  return res.json();
+}
+
+/**
+ * RAG step: three categories of data worth uploading for this canvas
+ * (the SunMoksha "Suggested Information to Upload" prompt).
+ * @returns {Promise<Array<{category: string, why: string, examples: string[]}>>}
+ */
+export async function suggestRagSources(sessionId, { bmc, story = "" } = {}) {
+  const data = await ragRequest(
+    "/api/rag/suggest",
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ sessionId, bmc, story }),
+    },
+    "Could not get upload suggestions"
+  );
+  return data.suggestions || [];
+}
+
+/**
+ * RAG step: Six Capitals profile — which capitals this business mainly builds
+ * or draws down (proposal requirement 9). The server also stores it so the
+ * MIA agents receive it as evidence for the plan.
+ */
+export async function analyzeSixCapitals(sessionId, { bmc, story = "", selectedVpTitle = "" } = {}) {
+  return ragRequest(
+    "/api/rag/capitals",
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ sessionId, bmc, story, selectedVpTitle }),
+    },
+    "Six Capitals analysis failed"
+  );
+}
+
+/**
+ * RAG step: upload the user's own documents (PDF, DOCX, TXT, MD) and/or pasted
+ * text. They are chunked, embedded and stored for this session only.
+ * @returns {Promise<{documents: Array<{docId: string, source: string, chunks: number}>, stored: number}>}
+ */
+export async function uploadRagDocuments(sessionId, { files = [], text = "" } = {}) {
+  const form = new FormData();
+  form.append("sessionId", sessionId);
+  if (text) form.append("text", text);
+  files.forEach((f) => form.append("files", f, f.name));
+  // No Content-Type header: the browser sets the multipart boundary.
+  return ragRequest("/api/rag/upload", { method: "POST", body: form }, "Upload failed");
+}
+
+/** @returns {Promise<Array<{docId: string, source: string, chunks: number}>>} */
+export async function listRagDocuments(sessionId) {
+  const data = await ragRequest(
+    `/api/rag/documents?sessionId=${encodeURIComponent(sessionId)}`,
+    { method: "GET" },
+    "Could not list documents"
+  );
+  return data.documents || [];
+}
+
+export async function deleteRagDocument(sessionId, docId) {
+  return ragRequest(
+    `/api/rag/documents/${encodeURIComponent(docId)}?sessionId=${encodeURIComponent(sessionId)}`,
+    { method: "DELETE" },
+    "Could not remove document"
+  );
 }
 
 /**
