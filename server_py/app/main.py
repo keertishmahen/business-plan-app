@@ -21,6 +21,8 @@ logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s %(levelname)-7s %(name)s — %(message)s",
 )
+# httpx logs every request URL at INFO; keep outbound API calls out of the logs.
+logging.getLogger("httpx").setLevel(logging.WARNING)
 
 log = logging.getLogger(__name__)
 

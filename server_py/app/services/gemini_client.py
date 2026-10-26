@@ -36,6 +36,11 @@ def _require_key() -> str:
     return GEMINI_API_KEY
 
 
+def _auth_headers() -> dict[str, str]:
+    # Header rather than ?key= so the key never appears in logged request URLs.
+    return {"x-goog-api-key": _require_key()}
+
+
 async def generate_text(
     prompt: str,
     *,
@@ -57,8 +62,8 @@ async def generate_text(
     extraction does not need the thinking pass; long-form writing does, so it
     keeps it.
     """
-    key = _require_key()
-    url = f"{GEMINI_BASE_URL}/{CHAT_MODEL}:generateContent?key={key}"
+    headers = _auth_headers()
+    url = f"{GEMINI_BASE_URL}/{CHAT_MODEL}:generateContent"
 
     generation_config: dict[str, Any] = {
         "temperature": temperature,
@@ -77,7 +82,7 @@ async def generate_text(
         body["systemInstruction"] = {"parts": [{"text": system_prompt}]}
 
     async with httpx.AsyncClient(timeout=_TIMEOUT) as client:
-        res = await client.post(url, json=body)
+        res = await client.post(url, json=body, headers=headers)
 
         # If the model or API version rejects the tuning options, retry once
         # without them rather than failing the whole step.
@@ -87,7 +92,7 @@ async def generate_text(
                 "temperature": temperature,
                 "maxOutputTokens": max_output_tokens,
             }
-            res = await client.post(url, json=body)
+            res = await client.post(url, json=body, headers=headers)
 
     if res.status_code != 200:
         detail = ""
@@ -152,15 +157,15 @@ def parse_json_response(text: str) -> Any | None:
 
 async def generate_embedding(text: str) -> list[float]:
     """Embed a single string."""
-    key = _require_key()
-    url = f"{GEMINI_BASE_URL}/{EMBEDDING_MODEL}:embedContent?key={key}"
+    headers = _auth_headers()
+    url = f"{GEMINI_BASE_URL}/{EMBEDDING_MODEL}:embedContent"
     body = {
         "model": f"models/{EMBEDDING_MODEL}",
         "content": {"parts": [{"text": text}]},
     }
 
     async with httpx.AsyncClient(timeout=_TIMEOUT) as client:
-        res = await client.post(url, json=body)
+        res = await client.post(url, json=body, headers=headers)
 
     if res.status_code != 200:
         detail = ""
@@ -184,8 +189,8 @@ async def generate_embeddings_batch(texts: list[str]) -> list[list[float]]:
     """
     if not texts:
         return []
-    key = _require_key()
-    url = f"{GEMINI_BASE_URL}/{EMBEDDING_MODEL}:batchEmbedContents?key={key}"
+    headers = _auth_headers()
+    url = f"{GEMINI_BASE_URL}/{EMBEDDING_MODEL}:batchEmbedContents"
     out: list[list[float]] = []
 
     async with httpx.AsyncClient(timeout=_TIMEOUT) as client:
@@ -197,7 +202,7 @@ async def generate_embeddings_batch(texts: list[str]) -> list[list[float]]:
                     for t in batch
                 ]
             }
-            res = await client.post(url, json=body)
+            res = await client.post(url, json=body, headers=headers)
             if res.status_code != 200:
                 detail = ""
                 try:
