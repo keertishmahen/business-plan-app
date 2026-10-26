@@ -1,13 +1,3 @@
----
-title: Symetra MIA API
-emoji: 🌱
-colorFrom: green
-colorTo: gray
-sdk: docker
-app_port: 3002
-pinned: false
----
-
 # Symmetra RAG + MIA backend (Python / FastAPI)
 
 Replaces the Node/Express server in `../server`. Same routes, same payloads — the

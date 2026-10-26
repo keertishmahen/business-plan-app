@@ -1,0 +1,23 @@
+# Render Blueprint — FastAPI + Chroma backend on the free web service tier.
+# Render builds server_py/Dockerfile and sets PORT itself; the knowledge base
+# self-seeds from the bundled vector snapshot on every cold start, so the free
+# tier's ephemeral disk only loses per-session uploads.
+services:
+  - type: web
+    name: symetra-mia-api
+    runtime: docker
+    plan: free
+    region: frankfurt
+    dockerfilePath: ./server_py/Dockerfile
+    dockerContext: ./server_py
+    healthCheckPath: /api/health
+    # Deploy only after the backend tests in GitHub Actions pass.
+    autoDeployTrigger: checksPass
+    buildFilter:
+      paths:
+        - server_py/**
+    envVars:
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: CORS_ORIGIN
+        value: https://keertishmahen.github.io

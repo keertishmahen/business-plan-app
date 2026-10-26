@@ -49,9 +49,9 @@ Every push to `main` deploys through GitHub Actions:
 | Piece | Host | Workflow |
 |---|---|---|
 | React frontend | GitHub Pages — https://keertishmahen.github.io/business-plan-app/ | [deploy-frontend.yml](.github/workflows/deploy-frontend.yml) |
-| FastAPI backend | Hugging Face Docker Space — https://keertishmahen-symetra-mia-api.hf.space | [deploy-backend.yml](.github/workflows/deploy-backend.yml) (runs when `server_py/**` changes) |
+| FastAPI backend | Render free web service — https://symetra-mia-api.onrender.com | [render.yaml](render.yaml) blueprint; deploys after [backend-tests.yml](.github/workflows/backend-tests.yml) passes |
 
-Repo secrets: `HF_TOKEN` (Hugging Face write token) and `GEMINI_API_KEY`. Repo variables: `RAG_URL` (API URL baked into the frontend), plus optional `HF_SPACE` and `CORS_ORIGIN`. The Space sleeps after 48h idle; the first request after that takes about a minute while it wakes. Per-session uploads don't survive a restart, but the knowledge base reseeds itself.
+`GEMINI_API_KEY` is set on the Render service, never in GitHub or the frontend. Repo variable `RAG_URL` is the API URL baked into the frontend. The free service sleeps after 15 min idle; the first request after that takes about a minute while it wakes. Per-session uploads don't survive a restart, but the knowledge base reseeds itself.
 
 Never upload a locally built `build/` folder: a local `.env` can bake `REACT_APP_GEMINI_API_KEY` into it. The Azure deploy script ([scripts/deploy-azure.ps1](scripts/deploy-azure.ps1)) is kept as a fallback.
 

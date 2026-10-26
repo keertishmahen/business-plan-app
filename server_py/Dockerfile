@@ -23,7 +23,7 @@ RUN mkdir -p /data/chroma
 ENV PORT=3002
 EXPOSE 3002
 
-# Run as non-root (uid 1000, as Hugging Face Spaces expects) and own the data dir.
+# Run as non-root (uid 1000) and own the data dir.
 RUN useradd --create-home --uid 1000 appuser && chown -R appuser:appuser /data /app
 USER appuser
 
