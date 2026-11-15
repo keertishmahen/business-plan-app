@@ -15,6 +15,7 @@ from contextlib import asynccontextmanager
 
 from .config import CORS_ORIGIN
 from .routers import context, generate, health, rag
+from .services import gemini_client
 from .services.chroma_store import ensure_knowledge_seeded
 
 logging.basicConfig(
@@ -38,6 +39,8 @@ async def lifespan(_app: FastAPI):
             log.info("Knowledge base already present")
     except Exception as exc:  # noqa: BLE001 - never block startup on seeding
         log.error("Knowledge seeding failed: %s", exc)
+    # A revoked key otherwise looks healthy until the first AI call fails.
+    await gemini_client.check_key()
     yield
 
 

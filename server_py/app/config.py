@@ -13,7 +13,7 @@ GEMINI_BASE_URL = "https://generativelanguage.googleapis.com/v1beta/models"
 
 # Kept identical to the Node implementation so prompts and the persisted
 # vectors stay valid across the migration.
-CHAT_MODEL = os.getenv("GEMINI_CHAT_MODEL", "gemini-2.5-flash")
+CHAT_MODEL = os.getenv("GEMINI_CHAT_MODEL") or os.getenv("GEMINI_MODEL") or "gemini-2.5-flash"
 EMBEDDING_MODEL = os.getenv("GEMINI_EMBEDDING_MODEL", "gemini-embedding-001")
 
 # ── Server ────────────────────────────────────────────────────────

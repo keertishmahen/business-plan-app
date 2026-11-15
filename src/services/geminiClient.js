@@ -137,7 +137,7 @@ export async function callGeminiJSON(prompt, opts = {}) {
 //  RAG Backend Integration
 //  Calls the RAG server for context-enriched generation.
 //  Falls back to direct Gemini calls if the backend is unavailable
-//  (local/dev only — never on Azure static hosting).
+//  (local/dev only — never in the hosted production build).
 // ──────────────────────────────────────────────────────────────────
 
 function isLocalUrl(url) {

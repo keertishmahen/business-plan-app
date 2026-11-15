@@ -11,7 +11,7 @@ function readStateIdx() {
 
 /**
  * Prefer browser history.back() only when the previous entry is an in-app route.
- * Otherwise run the fallback so we never exit the Azure site by accident.
+ * Otherwise run the fallback so we never leave the app by accident.
  */
 export function goBackOr(fallback) {
   if (typeof window === "undefined") {

@@ -14,8 +14,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY app ./app
 COPY scripts ./scripts
 
-# Chroma's persistent directory. Mount an Azure Files volume here in Container
-# Apps — without it the knowledge base is lost on every restart.
+# Chroma's directory. On Render's free tier this disk does not survive a
+# restart; the knowledge base reseeds itself from the bundled snapshot on start.
 ENV CHROMA_PATH=/data/chroma
 RUN mkdir -p /data/chroma
 

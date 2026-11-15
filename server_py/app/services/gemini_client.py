@@ -41,6 +41,39 @@ def _auth_headers() -> dict[str, str]:
     return {"x-goog-api-key": _require_key()}
 
 
+# Result of the start-up key check: True / False, or None when it could not be
+# decided (no key, network error, unexpected status). Reported by /api/health.
+key_valid: bool | None = None
+
+
+async def check_key() -> bool | None:
+    """Ask Gemini once whether the configured key works.
+
+    Looking up the chat model's metadata costs no tokens, so this runs at
+    start-up only — never per health probe — and records the answer.
+    """
+    global key_valid
+    if not GEMINI_API_KEY:
+        key_valid = None
+        return key_valid
+    try:
+        async with httpx.AsyncClient(timeout=httpx.Timeout(10.0)) as client:
+            res = await client.get(f"{GEMINI_BASE_URL}/{CHAT_MODEL}", headers=_auth_headers())
+    except httpx.HTTPError as exc:
+        log.warning("Gemini key check could not reach the API: %s", exc)
+        key_valid = None
+        return key_valid
+    if res.status_code == 200:
+        key_valid = True
+    elif res.status_code in (400, 401, 403):
+        key_valid = False
+        log.warning("GEMINI_API_KEY was rejected by Gemini (HTTP %s); AI calls will fail", res.status_code)
+    else:
+        key_valid = None
+        log.warning("Gemini key check returned unexpected HTTP %s", res.status_code)
+    return key_valid
+
+
 async def generate_text(
     prompt: str,
     *,

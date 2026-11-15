@@ -9,6 +9,7 @@ from fastapi.responses import JSONResponse
 
 from ..config import CHAT_MODEL, EMBEDDING_MODEL, GEMINI_API_KEY
 from ..services import chroma_store as store
+from ..services import gemini_client
 
 router = APIRouter()
 
@@ -31,6 +32,8 @@ async def health():
             "models": {"chat": CHAT_MODEL, "embedding": EMBEDDING_MODEL},
             # Presence only — never echo the key itself.
             "geminiKeyConfigured": bool(GEMINI_API_KEY),
+            # Checked once at start-up: true, false (rejected) or null (unknown).
+            "geminiKeyValid": gemini_client.key_valid,
         }
     except Exception as exc:  # noqa: BLE001
         return JSONResponse(
