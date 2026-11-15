@@ -1,4 +1,5 @@
 import { useRef, useState } from "react";
+import { Lightbulb, Library, FileText } from "lucide-react";
 
 /**
  * "Add your own knowledge" — the knowledge-upload half of the RAG step,
@@ -87,7 +88,7 @@ export default function RagKnowledgeUpload({
 
       {suggestions.length > 0 && (
         <div className="rag-upload__suggest">
-          <p className="rag-upload__suggest-title">💡 Suggested information to upload</p>
+          <p className="rag-upload__suggest-title"><Lightbulb size={15} aria-hidden="true" className="icon-inline" /> Suggested information to upload</p>
           <ol className="rag-upload__suggest-list">
             {suggestions.map((s) => (
               <li key={s.category}>
@@ -150,7 +151,7 @@ export default function RagKnowledgeUpload({
           onClick={process}
           disabled={locked || (!files.length && !text.trim())}
         >
-          {busy ? "Processing…" : "📚 Process knowledge sources"}
+          {busy ? "Processing…" : <><Library size={16} aria-hidden="true" /> Process knowledge sources</>}
         </button>
       </div>
 
@@ -158,7 +159,7 @@ export default function RagKnowledgeUpload({
         <ul className="rag-upload__docs" aria-label="Uploaded documents">
           {documents.map((d) => (
             <li key={d.docId} className="rag-upload__doc">
-              <span className="rag-upload__doc-name">📄 {d.source}</span>
+              <span className="rag-upload__doc-name"><FileText size={14} aria-hidden="true" className="icon-inline" /> {d.source}</span>
               <span className="rag-item__meta">{d.chunks} chunk{d.chunks === 1 ? "" : "s"} indexed</span>
               <button
                 type="button"

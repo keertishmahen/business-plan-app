@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Check } from "lucide-react";
 import VoiceEnabledInput from "./VoiceEnabledInput";
 
 /**
@@ -39,7 +40,7 @@ export default function FeedbackBar({ stepLabel, onRefine, onApprove, loading, i
             compact
           />
         </div>
-        {refined && <span className="feedback-dock__refined">✓ Refined</span>}
+        {refined && <span className="feedback-dock__refined"><Check size={13} strokeWidth={2.5} aria-hidden="true" /> Refined</span>}
         <div className="feedback-dock__actions">
           <button
             type="button"
@@ -55,7 +56,7 @@ export default function FeedbackBar({ stepLabel, onRefine, onApprove, loading, i
             disabled={loading}
             className="feedback-dock__approve-btn"
           >
-            {isLastStep ? "✓ Finish" : "Approve & continue"}
+            {isLastStep ? <><Check size={15} strokeWidth={2.5} aria-hidden="true" /> Finish</> : "Approve & continue"}
           </button>
         </div>
       </div>

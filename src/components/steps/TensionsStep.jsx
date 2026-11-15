@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { Check } from "lucide-react";
 import EvidenceBadge from "../shared/EvidenceBadge";
 import DriverBadge from "../shared/DriverBadge";
 import { ExternalLinkIcon } from "../shared/Icon";
@@ -260,7 +261,7 @@ function TensionListCard({ tension, index, isSelected, onSelect }) {
           <span className="tension-number">T{index + 1}</span>
           {tension.title}
         </span>
-        {tension.resolved && <span className="tensions-list-card__resolved">✓ Resolved</span>}
+        {tension.resolved && <span className="tensions-list-card__resolved"><Check size={12} strokeWidth={2.5} aria-hidden="true" className="icon-inline" /> Resolved</span>}
       </div>
       {/* Expand in place when selected — the truncated excerpt alone meant the
           full explanation was unreachable from this list (feedback p13). */}
@@ -350,7 +351,7 @@ function TensionDetail({ tension, index, onResolve }) {
           className={`tensions-detail__resolve${isResolved ? " tensions-detail__resolve--done" : ""}`}
           aria-label={isResolved ? "Tension already resolved" : "Mark tension as resolved"}
         >
-          {isResolved ? "✓ Resolved" : "Mark as resolved"}
+          {isResolved ? <><Check size={14} strokeWidth={2.5} aria-hidden="true" /> Resolved</> : "Mark as resolved"}
         </button>
       </div>
     </div>

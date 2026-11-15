@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Check, ArrowRight } from "lucide-react";
 
 const EXAMPLES = [
   "I'm building a platform that connects smallholder farmers in West Africa to urban markets, cutting food waste and improving farmer income. Our main challenge is logistics and trust between buyers and sellers.",
@@ -86,7 +87,7 @@ export default function StoryStep({ onSubmit, initialText = "" }) {
           disabled={!ready}
           style={{ padding: "11px 28px", fontSize: 15, fontWeight: 600 }}
         >
-          ✓ Looks right — generate →
+          <Check size={16} strokeWidth={2.5} aria-hidden="true" /> Looks right, generate <ArrowRight size={16} aria-hidden="true" />
         </button>
       </div>
     </div>

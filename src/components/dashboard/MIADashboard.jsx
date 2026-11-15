@@ -1,5 +1,5 @@
 import { memo } from "react";
-import { Sparkles, Map } from "lucide-react";
+import { Map } from "lucide-react";
 import {
   formatAgentText,
   collectRagSourcesFromMetadata,
@@ -11,7 +11,8 @@ import AgentHub from "./AgentHub";
 import AgentActivityFeed from "./AgentActivityFeed";
 import SpecialistInsightsPanel from "./SpecialistInsightsPanel";
 import AgentProgressIndicator from "../shared/AgentProgressIndicator";
-import { APP_NAME, APP_TAGLINE } from "../../constants/branding";
+import { APP_TAGLINE } from "../../constants/branding";
+import BrandLogo from "../shared/BrandLogo";
 import { getActiveAgents } from "../../constants/agents";
 import { TONES, getTone } from "../../constants/tone";
 
@@ -56,13 +57,11 @@ export default memo(function MIADashboard({
       <header className="glass-header corp-brand-bar" role="banner">
         <div className="glass-header__inner">
           <div className="glass-header__brand">
-            <div className="glass-header__logo">
-              <Sparkles size={18} color="#fff" strokeWidth={2} />
-            </div>
-            <div>
-              <h1 className="glass-header__title">{APP_NAME}</h1>
-              <p className="glass-header__subtitle">{APP_TAGLINE}</p>
-            </div>
+            <h1 className="glass-header__title">
+              <BrandLogo height={34} />
+            </h1>
+            <span className="brand-divider" aria-hidden="true" />
+            <p className="glass-header__subtitle">{APP_TAGLINE}</p>
           </div>
 
           <div className="glass-header__actions">

@@ -1,5 +1,7 @@
 import { useState, useCallback, useRef } from "react";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 import ChatInterface from "./ChatInterface";
+import BrandLogo from "../shared/BrandLogo";
 import SidePanel from "./SidePanel";
 import { compileStory } from "../../utils/compileStory";
 
@@ -59,7 +61,7 @@ export default function GuidedInput({ onComplete, onBack }) {
       const doneMsg = {
         id: `ai-done-${Date.now()}`,
         role: "ai",
-        content: "Thanks! I have a good understanding of your business idea. Click Continue → when you're ready to generate your business plan.",
+        content: "Thanks! I have a good understanding of your business idea. Click Continue when you're ready to generate your business plan.",
         timestamp: new Date().toISOString(),
       };
       setMessages((prev) => [...prev, doneMsg]);
@@ -100,6 +102,7 @@ export default function GuidedInput({ onComplete, onBack }) {
   return (
     <div className="guided-input-shell" role="region" aria-label="Guided input">
       <header className="guided-input-header" role="banner">
+        <BrandLogo height={36} className="guided-input-header__logo" />
         <h1 className="guided-input-header__title">Tell us about your business</h1>
         <p className="guided-input-header__subtitle">
           Answer a few questions so we can craft your business plan
@@ -126,7 +129,7 @@ export default function GuidedInput({ onComplete, onBack }) {
 
       <div className="guided-input-nav">
         <button type="button" className="btn-secondary" onClick={handleBack} aria-label="Go back">
-          ← Back
+          <ArrowLeft size={16} aria-hidden="true" /> Back
         </button>
 
         {/* Your story is mandatory — only the follow-up questions are optional
@@ -150,7 +153,7 @@ export default function GuidedInput({ onComplete, onBack }) {
           disabled={!canContinue}
           aria-label="Continue to generate business plan"
         >
-          Continue →
+          Continue <ArrowRight size={16} aria-hidden="true" />
         </button>
       </div>
     </div>

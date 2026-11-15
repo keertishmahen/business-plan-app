@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect } from "react";
+import { X } from "lucide-react";
 import { TOOLTIP_CONTENT } from "../../constants/tooltips";
 import { BMC_BLOCKS, BMC_PILLARS, BMC_PILLAR_ROWS } from "../../constants/bmcBlocks";
 import { normalizeBlocks } from "../../utils/bmcFormat";
@@ -62,7 +63,7 @@ function BMCItem({ item, blockId, onSave, onDelete }) {
           aria-label={`Delete item: ${item.text}`}
           title="Delete item"
         >
-          ✕
+          <X size={13} aria-hidden="true" />
         </button>
       </div>
     );

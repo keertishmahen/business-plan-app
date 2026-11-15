@@ -45,6 +45,7 @@ import {
 } from "./hooks/useSessionArchive";
 import { pathFromState } from "./utils/appRoutes";
 import { APP_NAME } from "./constants/branding";
+import BrandLogo from "./components/shared/BrandLogo";
 import { initialState } from "./hooks/useWorkflow";
 
 function buildFreshOnboardingSnapshot(tourCompleted) {
@@ -224,7 +225,7 @@ function ResumeDialog({ onResume, onStartFresh }) {
     >
       <div className="modal-glass-panel" style={{ maxWidth: 440, textAlign: "center" }}>
         <div className="modal-glass-panel__body">
-          <div style={{ fontSize: 32, marginBottom: 16 }} aria-hidden="true">👋</div>
+          <BrandLogo variant="mark" height={56} decorative className="brand-logo--center" />
           <h2
             id="resume-dialog-title"
             className="modal-glass-panel__title"
@@ -1023,7 +1024,11 @@ export default function App() {
   if (!apiKeyAvailable) {
     if (isServerManaged() && !ragBackendReady) {
       return (
-        <LoadingState label="Connecting to Symmetra Systems server…" />
+        <LoadingState
+          brand
+          label="Connecting to the Symmetra Systems server…"
+          hint="After a quiet spell the server can take up to a minute to wake up."
+        />
       );
     }
     return <ApiKeyScreen onSubmit={handleApiKeySubmit} />;

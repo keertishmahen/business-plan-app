@@ -1,4 +1,5 @@
 import { useState, useRef } from "react";
+import { Check } from "lucide-react";
 import InfoTooltip from "./InfoTooltip";
 import { TOOLTIP_CONTENT } from "../../constants/tooltips";
 
@@ -152,7 +153,7 @@ export default function StoryReadback({ inferences, onConfirm, confirmLabel = "L
           }}
           style={{ flex: 1, justifyContent: "center" }}
         >
-          ✓ {confirmLabel}
+          <Check size={16} strokeWidth={2.5} aria-hidden="true" /> {confirmLabel}
         </button>
         <button
           type="button"

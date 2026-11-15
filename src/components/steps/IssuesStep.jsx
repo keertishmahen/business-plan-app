@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { ChevronRight } from "lucide-react";
 import { DRIVER_STYLES } from "../../constants/steps";
 import DriverBadge from "../shared/DriverBadge";
 import SDGChip from "../shared/SDGChip";
@@ -66,7 +67,7 @@ export default function IssuesStep({ data }) {
                           transform: isExpanded ? "rotate(90deg)" : "rotate(0deg)",
                         }}
                       >
-                        ▶
+                        <ChevronRight size={14} aria-hidden="true" />
                       </button>
                     </div>
 

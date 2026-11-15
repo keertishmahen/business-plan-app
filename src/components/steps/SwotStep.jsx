@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from "react";
-import { Shield, Link2, TrendingUp, AlertTriangle, Check, Sparkles } from "lucide-react";
+import { Shield, Link2, TrendingUp, AlertTriangle, Check, Sparkles, X } from "lucide-react";
 import InfoTooltip from "../shared/InfoTooltip";
 import { TOOLTIP_CONTENT } from "../../constants/tooltips";
 
@@ -294,14 +294,14 @@ export default function SwotStep({
                               style={{ background: cfg.border, color: cfg.text }}
                               aria-label="Save edit"
                             >
-                              ✓
+                              <Check size={14} aria-hidden="true" />
                             </button>
                             <button
                               onClick={() => handleDelete(quadrant, item.id)}
                               className="swot-item__btn swot-item__btn--delete"
                               aria-label="Delete item"
                             >
-                              ✕
+                              <X size={14} aria-hidden="true" />
                             </button>
                           </div>
                         );

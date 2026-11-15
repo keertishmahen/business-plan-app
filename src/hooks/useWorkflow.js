@@ -1,22 +1,11 @@
 import { useReducer } from "react";
 import { sanitizeAgentMetadata, sanitizeSpecialistData } from "../utils/agentText";
 import { ALL_AGENT_IDS } from "../constants/agents";
+import { STEP_ORDER } from "../constants/steps";
 
-/**
- * The fixed 10-step sequence for the workflow.
- */
-export const STEP_ORDER = [
-  "story",
-  "focus",
-  "issues",
-  "tensions",
-  "dilemmas",
-  "values",
-  "swot",
-  "bmc",
-  "rag",
-  "plan",
-];
+// Defined in constants so utils can use it without depending on a hook
+// (docs/ARCHITECTURE.md); re-exported for existing importers.
+export { STEP_ORDER };
 
 /**
  * Initial state for the workflow reducer.

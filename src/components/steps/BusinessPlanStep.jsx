@@ -1,6 +1,7 @@
 import { memo, useState, useDeferredValue } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { FileText, Lock, Download, Check, RefreshCw } from "lucide-react";
 import ExportModal from "../shared/ExportModal";
 import {
   exportToWord,
@@ -101,7 +102,7 @@ function BusinessPlanStep({
     <div className="animate-fade-in">
       {selectedVP?.title && (
         <div style={styles.vpHeader}>
-          📄 Business Plan — {selectedVP.title}
+          <FileText size={16} aria-hidden="true" className="icon-inline" /> Business Plan — {selectedVP.title}
         </div>
       )}
 
@@ -129,14 +130,14 @@ function BusinessPlanStep({
             className="btn-secondary"
             style={styles.refineButton}
           >
-            {loading ? "Refining…" : "⟳ Refine"}
+            {loading ? "Refining…" : <><RefreshCw size={15} aria-hidden="true" /> Refine</>}
           </button>
         </div>
       </div>
 
       <div className="glass-info-card--brand" style={styles.privacyReminder}>
         <div style={styles.privacyHeader}>
-          <span style={styles.privacyIcon} aria-hidden="true">🔒</span>
+          <span style={styles.privacyIcon} aria-hidden="true"><Lock size={16} /></span>
           <span style={styles.privacyTitle}>Your data stays yours</span>
         </div>
         <p style={styles.privacyDescription}>
@@ -166,7 +167,7 @@ function BusinessPlanStep({
           onClick={() => setExportModalOpen(true)}
           style={styles.exportButton}
         >
-          📥 Export
+          <Download size={16} aria-hidden="true" /> Export
         </button>
       </div>
 
@@ -179,7 +180,7 @@ function BusinessPlanStep({
       {planText && onRequestSaveAndStartFresh && (
         <div className="glass-info-card--brand" style={styles.completionPanel}>
           <div style={styles.completionHeader}>
-            <span style={styles.completionIcon} aria-hidden="true">✓</span>
+            <span style={styles.completionIcon} aria-hidden="true"><Check size={18} strokeWidth={2.5} /></span>
             <h3 style={styles.completionTitle}>Your business plan is complete</h3>
           </div>
           <p style={styles.completionDescription}>

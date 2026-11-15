@@ -1,29 +1,35 @@
 import { useState } from "react";
 import {
-  Sparkles,
-  Lightbulb,
-  Handshake,
-  Rocket,
-  Users,
   X,
   Check,
-  LayoutDashboard,
-  Bot,
-  Shield,
   BookOpen,
   GitBranch,
   Flag,
   ArrowUpRight,
+  ArrowRight,
+  ChevronDown,
+  Network,
+  Scale,
+  FileCheck2,
+  Factory,
+  Microscope,
+  Target,
+  Eye,
 } from "lucide-react";
-import { APP_NAME, APP_DESCRIPTION, APP_TAGLINE } from "../constants/branding";
+import { STUDIO_NAME, STUDIO_HOME } from "../constants/branding";
 import useInViewOnce from "../hooks/useInViewOnce";
+import BrandLogo from "./shared/BrandLogo";
+
+// Public-safe summary of the SRG – Symmetra Systems Design Studio brief
+// (docs/product-specs/about-symmetra.md). No people, funding, internal dates or
+// unvalidated targets belong on this page.
 
 const NAV_LINKS = [
-  { id: "who", label: "Who" },
-  { id: "platform", label: "Platform" },
-  { id: "process", label: "Process" },
-  { id: "values", label: "Values" },
-  { id: "why", label: "Why" },
+  { id: "about", label: "About" },
+  { id: "goals", label: "Goals" },
+  { id: "principles", label: "Principles" },
+  { id: "copilot", label: "Co-pilot" },
+  { id: "next", label: "Next" },
 ];
 
 const GLOSSARY = [
@@ -31,46 +37,65 @@ const GLOSSARY = [
   { term: "SDG", definition: "Sustainable Development Goals — 17 global goals adopted by the United Nations for 2030." },
   { term: "BMC", definition: "Expanded Business Model Canvas — an 11-block template describing how a business creates value, including social and environmental impact." },
   { term: "DTM", definition: "Dilemma Triangle Method — a People–Planet–Prosperity framework for surfacing and ranking strategic trade-offs in SDG-aligned planning." },
-  { term: "Value Proposition", definition: "The unique benefit your product or service provides to a specific customer segment." },
-  { term: "Tension Matrix", definition: "A grid showing where your goals conflict — e.g. faster growth vs. lower emissions." },
+  { term: "Decision allocation", definition: "A recommendation of how decision work is divided between people and AI: AI-led, AI-supported or human-led." },
+  { term: "Decision authority", definition: "The formally delegated power to approve a change. It always stays with the organisation, never with the tool." },
 ];
 
 const GLOSSARY_PREVIEW_COUNT = 3;
 
-const WHO_CARDS = [
+const ABOUT_CARDS = [
   {
-    title: "Built for growing ideas",
-    text: "For startups and SMBs that need a structured model without hiring a full strategy team.",
+    title: "From research to practice",
+    text: "We turn SRG research in systems engineering, connected engineering knowledge and human–AI decision-making into tools that organisations can try, question and evaluate.",
   },
   {
-    title: "Multi-intelligence guidance",
-    text: "Grounded in guided steps, critique, and SDG awareness — not a blank chatbot chat.",
+    title: "Built around real decisions",
+    text: "We focus on the moments where engineering and business decisions are hard to trace, justify or hand over — and where better structure makes a difference.",
   },
   {
-    title: "Designed to ship",
-    text: "Outputs you can refine, export, and use — not a one-off report that dies in a folder.",
-  },
-];
-
-const PLATFORM_CARDS = [
-  {
-    title: "Co-pilot workspace",
-    text: "One place to move from idea to model with guided steps and live agent support.",
-    Icon: LayoutDashboard,
-  },
-  {
-    title: "Specialist insights",
-    text: "Critique, SDG, and domain specialists surface tensions and opportunities as you go.",
-    Icon: Bot,
-  },
-  {
-    title: "Private by default",
-    text: "Your work stays in the browser — you control what gets exported and shared.",
-    Icon: Shield,
+    title: "Open about what is proven",
+    text: "Each tool starts as a decision-support prototype. We say clearly what has been demonstrated and what is still being validated.",
   },
 ];
 
-const PROCESS_CARDS = [
+const GOAL_CARDS = [
+  {
+    title: "Trace the consequences of change",
+    text: "Connect engineering knowledge so the assets, processes and dependencies a change affects can be found, not guessed.",
+    Icon: Network,
+  },
+  {
+    title: "Make human–AI roles explicit",
+    text: "Recommend whether a decision should be AI-led, AI-supported or human-led, and show the reasoning behind the recommendation.",
+    Icon: Scale,
+  },
+  {
+    title: "Keep a defensible record",
+    text: "Capture the evidence, assumptions, rationale and approval status behind every recommendation in one place.",
+    Icon: FileCheck2,
+  },
+  {
+    title: "Validate with industry",
+    text: "Shape and test each tool with the people who will use it before making any claim about its value.",
+    Icon: Factory,
+  },
+];
+
+const OUR_TOOLS_DO = [
+  "Show their sources, assumptions, missing data and uncertainty",
+  "Recommend who should decide, with the reasoning visible",
+  "Let people confirm, correct or override every recommendation",
+  "Keep a record of evidence, rationale and reviewer status",
+];
+
+const OUR_TOOLS_NEVER = [
+  "Approve a change on their own",
+  "Replace an organisation's own approval rules",
+  "Connect to live industrial control systems",
+  "Present illustrative estimates as benchmarked results",
+];
+
+const COPILOT_STEPS = [
   {
     title: "Story",
     text: "Share your idea and who you serve — type or speak — to ground everything that follows.",
@@ -78,53 +103,20 @@ const PROCESS_CARDS = [
   },
   {
     title: "Focus & tensions",
-    text: "Clarify drivers, issues, and trade-offs so goals don’t silently conflict.",
+    text: "Four specialist agents help you clarify drivers, issues and trade-offs so goals don't silently conflict.",
     Icon: GitBranch,
   },
   {
-    title: "Model & plan",
-    text: "Build SWOT, canvas, and an actionable plan you can refine and take forward.",
+    title: "Evidence & plan",
+    text: "Review the evidence the plan will use, then get a SWOT, canvas and SDG-aligned plan you can refine and export.",
     Icon: Flag,
   },
 ];
 
-const VALUE_CARDS = [
-  {
-    title: "Clarity over complexity",
-    text: "We prefer simple, well-defined paths that teams can understand and finish.",
-    Icon: Lightbulb,
-  },
-  {
-    title: "Trust and transparency",
-    text: "You always know what the agents suggest, why, and what stays yours.",
-    Icon: Handshake,
-  },
-  {
-    title: "Built for the long term",
-    text: "We optimize for lasting models — not short-term planning hacks.",
-    Icon: Rocket,
-  },
-  {
-    title: "Business-first thinking",
-    text: "Co-creation should support real decisions, not just look impressive.",
-    Icon: Users,
-  },
-];
-
-const PROBLEMS = [
-  "Blank-page overwhelm",
-  "Goals conflict without clarity",
-  "SDG claims without grounding",
-  "Plans that don’t survive contact with users",
-  "Low confidence in next steps",
-];
-
-const WITH_SYMETRA = [
-  "Structured 10-step path",
-  "Tension spotting as you go",
-  "SDG-aware prompts",
-  "Editable, exportable outputs",
-  "You stay in control of decisions",
+const CHANGE_IMPACT_POINTS = [
+  { text: "Show what an engineering change affects across assets and processes", Icon: Target },
+  { text: "Recommend who should decide, and keep that separate from who may approve", Icon: Scale },
+  { text: "Keep the evidence and approval record together in one exportable case", Icon: Eye },
 ];
 
 function aboutClass(inView, extra = "") {
@@ -140,6 +132,35 @@ function scrollToSection(id) {
   el.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
 }
 
+function SectionIntro({ id, pill, title, sub }) {
+  return (
+    <div className="entry-about__intro">
+      <span className="entry-pill entry-reveal" style={{ "--entry-stagger": 0 }}>{pill}</span>
+      <h2 id={`${id}-heading`} className="entry-about__title entry-reveal" style={{ "--entry-stagger": 1 }}>
+        {title}
+      </h2>
+      <p className="entry-about__sub entry-reveal" style={{ "--entry-stagger": 2 }}>
+        {sub}
+      </p>
+    </div>
+  );
+}
+
+function IconCard({ title, text, Icon, index }) {
+  return (
+    <article
+      className="entry-glass-card entry-glass-card--value entry-reveal"
+      style={{ "--entry-stagger": index + 3 }}
+    >
+      <div className="entry-glass-card__icon" aria-hidden="true">
+        <Icon size={22} strokeWidth={1.75} />
+      </div>
+      <h3 className="entry-glass-card__title">{title}</h3>
+      <p className="entry-glass-card__text">{text}</p>
+    </article>
+  );
+}
+
 export default function OnboardingScreen({
   onStartCreating,
   onTakeTour,
@@ -148,11 +169,11 @@ export default function OnboardingScreen({
 }) {
   const [buttonsDisabled, setButtonsDisabled] = useState(false);
   const [glossaryExpanded, setGlossaryExpanded] = useState(false);
-  const [whoRef, whoInView] = useInViewOnce();
-  const [platformRef, platformInView] = useInViewOnce();
-  const [processRef, processInView] = useInViewOnce();
-  const [valuesRef, valuesInView] = useInViewOnce();
-  const [whyRef, whyInView] = useInViewOnce();
+  const [aboutRef, aboutInView] = useInViewOnce();
+  const [goalsRef, goalsInView] = useInViewOnce();
+  const [principlesRef, principlesInView] = useInViewOnce();
+  const [copilotRef, copilotInView] = useInViewOnce();
+  const [nextRef, nextInView] = useInViewOnce();
 
   function handleStartCreating() {
     setButtonsDisabled(true);
@@ -167,19 +188,13 @@ export default function OnboardingScreen({
 
   return (
     <div className="entry-screen entry-screen--wide entry-screen--hero">
-      <main className="entry-shell entry-shell--hero animate-fade-in" aria-label="Onboarding">
+      <main className="entry-shell entry-shell--hero animate-fade-in" aria-label="About Symmetra Systems">
         <header className="entry-nav entry-nav--moc">
           <div className="entry-nav__brand">
-            <div className="entry-nav__logo" aria-hidden="true">
-              <Sparkles size={16} strokeWidth={2} />
-            </div>
-            <div className="entry-nav__brand-text">
-              <span className="entry-nav__name">{APP_NAME}</span>
-              <span className="entry-nav__tagline">{APP_TAGLINE}</span>
-            </div>
+            <BrandLogo height={36} />
           </div>
 
-          <nav className="entry-nav__pill" aria-label="Onboarding sections">
+          <nav className="entry-nav__pill" aria-label="Page sections">
             {NAV_LINKS.map(({ id, label }) => (
               <button
                 key={id}
@@ -213,15 +228,14 @@ export default function OnboardingScreen({
           </button>
         </header>
 
-        <section className="entry-hero" aria-labelledby="entry-hero-brand">
-          <p id="entry-hero-brand" className="entry-hero__brand">
-            {APP_NAME}
-          </p>
-          <h1 className="entry-hero__headline">
-            Co-create your SDG-aligned business model in 30 minutes.
+        <section className="entry-hero" aria-labelledby="entry-hero-headline">
+          <p className="entry-hero__brand">{STUDIO_NAME}</p>
+          <h1 id="entry-hero-headline" className="entry-hero__headline">
+            Decisions people can understand, trust and defend.
           </h1>
           <p className="entry-hero__support">
-            {APP_NAME} is your {APP_DESCRIPTION} — guided steps, SDG alignment, and clear next actions.
+            Symmetra Systems turns systems-engineering research from the Systems Realization Group
+            at Cranfield University into decision-support tools that keep people in charge.
           </p>
           <nav className="entry-hero__cta" aria-label="Getting started">
             <button
@@ -231,7 +245,8 @@ export default function OnboardingScreen({
               disabled={buttonsDisabled}
               style={disabledStyle}
             >
-              Start creating
+              Start the business plan co-pilot
+              <ArrowRight size={16} aria-hidden="true" />
             </button>
             <button
               type="button"
@@ -245,28 +260,16 @@ export default function OnboardingScreen({
           </nav>
         </section>
 
-        <section
-          id="who"
-          ref={whoRef}
-          className={aboutClass(whoInView)}
-          aria-labelledby="who-heading"
-        >
-          <div className="entry-about__intro" style={{ "--entry-stagger": 0 }}>
-            <span className="entry-pill entry-reveal">Who We Are</span>
-            <h2 id="who-heading" className="entry-about__title entry-reveal" style={{ "--entry-stagger": 1 }}>
-              Who We Are
-            </h2>
-            <p className="entry-about__sub entry-reveal" style={{ "--entry-stagger": 2 }}>
-              Symmetra Systems helps founders and teams co-create clear, SDG-aligned business models — so strategy stays actionable, not buried in slides.
-            </p>
-          </div>
+        <section id="about" ref={aboutRef} className={aboutClass(aboutInView)} aria-labelledby="about-heading">
+          <SectionIntro
+            id="about"
+            pill="About"
+            title="Who we are"
+            sub="The SRG – Symmetra Systems Design Studio works with engineering, manufacturing and process-industry organisations on decisions that need to be traceable and accountable."
+          />
           <div className="entry-about__grid">
-            {WHO_CARDS.map(({ title, text }, index) => (
-              <article
-                key={title}
-                className="entry-glass-card entry-reveal"
-                style={{ "--entry-stagger": index + 3 }}
-              >
+            {ABOUT_CARDS.map(({ title, text }, index) => (
+              <article key={title} className="entry-glass-card entry-reveal" style={{ "--entry-stagger": index + 3 }}>
                 <h3 className="entry-glass-card__title">{title}</h3>
                 <p className="entry-glass-card__text">{text}</p>
               </article>
@@ -275,153 +278,44 @@ export default function OnboardingScreen({
         </section>
 
         <section
-          id="platform"
-          ref={platformRef}
-          className={aboutClass(platformInView, "entry-about--platform")}
-          aria-labelledby="platform-heading"
+          id="goals"
+          ref={goalsRef}
+          className={aboutClass(goalsInView, "entry-about--values")}
+          aria-labelledby="goals-heading"
         >
-          <div className="entry-about__intro">
-            <span className="entry-pill entry-reveal" style={{ "--entry-stagger": 0 }}>Platform</span>
-            <h2
-              id="platform-heading"
-              className="entry-about__title entry-reveal"
-              style={{ "--entry-stagger": 1 }}
-            >
-              The Platform
-            </h2>
-            <p className="entry-about__sub entry-reveal" style={{ "--entry-stagger": 2 }}>
-              Multi-intelligence agents that co-create with you — guided steps, critique, and SDG awareness in one workspace.
-            </p>
-          </div>
-          <div className="entry-about__grid">
-            {PLATFORM_CARDS.map(({ title, text, Icon }, index) => (
-              <article
-                key={title}
-                className="entry-glass-card entry-glass-card--value entry-reveal"
-                style={{ "--entry-stagger": index + 3 }}
-              >
-                <div className="entry-glass-card__icon" aria-hidden="true">
-                  <Icon size={22} strokeWidth={1.75} />
-                </div>
-                <h3 className="entry-glass-card__title">{title}</h3>
-                <p className="entry-glass-card__text">{text}</p>
-              </article>
-            ))}
-          </div>
-        </section>
-
-        <section
-          id="process"
-          ref={processRef}
-          className={aboutClass(processInView, "entry-about--process")}
-          aria-labelledby="process-heading"
-        >
-          <div className="entry-about__intro">
-            <span className="entry-pill entry-reveal" style={{ "--entry-stagger": 0 }}>Process</span>
-            <h2
-              id="process-heading"
-              className="entry-about__title entry-reveal"
-              style={{ "--entry-stagger": 1 }}
-            >
-              How it works
-            </h2>
-            <p className="entry-about__sub entry-reveal" style={{ "--entry-stagger": 2 }}>
-              A clear path from story to an actionable model — about 30 minutes, step by step.
-            </p>
-          </div>
-          <div className="entry-about__grid">
-            {PROCESS_CARDS.map(({ title, text, Icon }, index) => (
-              <article
-                key={title}
-                className="entry-glass-card entry-glass-card--value entry-reveal"
-                style={{ "--entry-stagger": index + 3 }}
-              >
-                <div className="entry-glass-card__icon" aria-hidden="true">
-                  <Icon size={22} strokeWidth={1.75} />
-                </div>
-                <h3 className="entry-glass-card__title">{title}</h3>
-                <p className="entry-glass-card__text">{text}</p>
-              </article>
-            ))}
-          </div>
-        </section>
-
-        <section
-          id="values"
-          ref={valuesRef}
-          className={aboutClass(valuesInView, "entry-about--values")}
-          aria-labelledby="values-heading"
-        >
-          <div className="entry-about__intro">
-            <span className="entry-pill entry-reveal" style={{ "--entry-stagger": 0 }}>Our Values</span>
-            <h2
-              id="values-heading"
-              className="entry-about__title entry-reveal"
-              style={{ "--entry-stagger": 1 }}
-            >
-              The Values Behind Symmetra Systems
-            </h2>
-            <p className="entry-about__sub entry-reveal" style={{ "--entry-stagger": 2 }}>
-              A few principles that keep co-creation useful, trustworthy, and sustainable.
-            </p>
-          </div>
+          <SectionIntro
+            id="goals"
+            pill="Our goals"
+            title="What we are working towards"
+            sub="Helping organisations understand what a change affects, identify who should decide, and keep a defensible record of the evidence and approval."
+          />
           <div className="entry-values__grid">
-            {VALUE_CARDS.map(({ title, text, Icon }, index) => (
-              <article
-                key={title}
-                className="entry-glass-card entry-glass-card--value entry-reveal"
-                style={{ "--entry-stagger": index + 3 }}
-              >
-                <div className="entry-glass-card__icon" aria-hidden="true">
-                  <Icon size={22} strokeWidth={1.75} />
-                </div>
-                <h3 className="entry-glass-card__title">{title}</h3>
-                <p className="entry-glass-card__text">{text}</p>
-              </article>
+            {GOAL_CARDS.map((card, index) => (
+              <IconCard key={card.title} {...card} index={index} />
             ))}
           </div>
         </section>
 
         <section
-          id="why"
-          ref={whyRef}
-          className={aboutClass(whyInView, "entry-about--why")}
-          aria-labelledby="why-heading"
+          id="principles"
+          ref={principlesRef}
+          className={aboutClass(principlesInView, "entry-about--why")}
+          aria-labelledby="principles-heading"
         >
-          <div className="entry-about__intro">
-            <span className="entry-pill entry-reveal" style={{ "--entry-stagger": 0 }}>Why us</span>
-            <h2
-              id="why-heading"
-              className="entry-about__title entry-reveal"
-              style={{ "--entry-stagger": 1 }}
-            >
-              What makes Symmetra different
-            </h2>
-            <p className="entry-about__sub entry-reveal" style={{ "--entry-stagger": 2 }}>
-              Foundations you can rely on — not one-off tips or a black-box plan generator.
-            </p>
-          </div>
+          <SectionIntro
+            id="principles"
+            pill="How we work"
+            title="Decision support, not autonomous approval"
+            sub="Our tools recommend how decision work is divided between people and AI. The authority to approve always stays with the organisation."
+          />
           <div className="entry-why__grid">
-            <article className="entry-why-card entry-reveal" style={{ "--entry-stagger": 3 }}>
-              <h3 className="entry-why-card__title">Common planning problems</h3>
-              <ul className="entry-why-card__list">
-                {PROBLEMS.map((item) => (
-                  <li key={item}>
-                    <span className="entry-why-card__mark entry-why-card__mark--bad" aria-hidden="true">
-                      <X size={14} strokeWidth={2.5} />
-                    </span>
-                    <span>{item}</span>
-                  </li>
-                ))}
-              </ul>
-            </article>
             <article
               className="entry-why-card entry-why-card--highlight entry-reveal"
-              style={{ "--entry-stagger": 4 }}
+              style={{ "--entry-stagger": 3 }}
             >
-              <h3 className="entry-why-card__title">With Symmetra Systems</h3>
+              <h3 className="entry-why-card__title">Our tools always</h3>
               <ul className="entry-why-card__list">
-                {WITH_SYMETRA.map((item) => (
+                {OUR_TOOLS_DO.map((item) => (
                   <li key={item}>
                     <span className="entry-why-card__mark entry-why-card__mark--good" aria-hidden="true">
                       <Check size={14} strokeWidth={2.5} />
@@ -431,7 +325,85 @@ export default function OnboardingScreen({
                 ))}
               </ul>
             </article>
+            <article className="entry-why-card entry-reveal" style={{ "--entry-stagger": 4 }}>
+              <h3 className="entry-why-card__title">Our tools never</h3>
+              <ul className="entry-why-card__list">
+                {OUR_TOOLS_NEVER.map((item) => (
+                  <li key={item}>
+                    <span className="entry-why-card__mark entry-why-card__mark--bad" aria-hidden="true">
+                      <X size={14} strokeWidth={2.5} />
+                    </span>
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </article>
           </div>
+        </section>
+
+        <section
+          id="copilot"
+          ref={copilotRef}
+          className={aboutClass(copilotInView, "entry-about--process")}
+          aria-labelledby="copilot-heading"
+        >
+          <SectionIntro
+            id="copilot"
+            pill="Available now"
+            title="Business Plan Co-Pilot"
+            sub="Co-create an SDG-aligned business model in about 30 minutes. A guided ten-step path, specialist AI agents, and evidence you review before the plan is written — you approve every step."
+          />
+          <div className="entry-about__grid">
+            {COPILOT_STEPS.map((card, index) => (
+              <IconCard key={card.title} {...card} index={index} />
+            ))}
+          </div>
+          <div className="entry-section-cta entry-reveal" style={{ "--entry-stagger": 6 }}>
+            <button
+              type="button"
+              className="btn-primary"
+              onClick={handleStartCreating}
+              disabled={buttonsDisabled}
+              style={disabledStyle}
+            >
+              Start creating
+              <ArrowRight size={16} aria-hidden="true" />
+            </button>
+          </div>
+        </section>
+
+        <section
+          id="next"
+          ref={nextRef}
+          className={aboutClass(nextInView, "entry-about--next")}
+          aria-labelledby="next-heading"
+        >
+          <SectionIntro
+            id="next"
+            pill="In development"
+            title="Symmetra Change Impact"
+            sub="Understand what an engineering change affects, identify who should decide, and retain a defensible record of the evidence and approval."
+          />
+          <article className="entry-glass-card entry-next-card entry-reveal" style={{ "--entry-stagger": 3 }}>
+            <div className="entry-next-card__status">
+              <Microscope size={16} aria-hidden="true" />
+              Early-stage decision-support prototype — not yet available
+            </div>
+            <ul className="entry-next-card__list">
+              {CHANGE_IMPACT_POINTS.map(({ text, Icon }) => (
+                <li key={text}>
+                  <span className="entry-glass-card__icon entry-next-card__icon" aria-hidden="true">
+                    <Icon size={18} strokeWidth={1.75} />
+                  </span>
+                  <span>{text}</span>
+                </li>
+              ))}
+            </ul>
+            <p className="entry-next-card__note">
+              Management of Change in asset-intensive and process industries is the first area we are exploring.
+              Demonstrations use synthetic or authorised data only.
+            </p>
+          </article>
         </section>
 
         <section className="entry-glossary entry-glossary--quiet" aria-labelledby="glossary-heading">
@@ -469,11 +441,20 @@ export default function OnboardingScreen({
                 aria-label={glossaryExpanded ? "Show fewer glossary terms" : "Show all glossary terms"}
               >
                 {glossaryExpanded ? "Show fewer" : "Show all glossary"}
-                <span aria-hidden="true">›</span>
+                <ChevronDown
+                  size={14}
+                  aria-hidden="true"
+                  style={{ transform: glossaryExpanded ? "rotate(180deg)" : "none", transition: "transform 0.2s" }}
+                />
               </button>
             )}
           </div>
         </section>
+
+        <footer className="entry-footer">
+          <BrandLogo variant="mark" height={28} decorative />
+          <span>{STUDIO_NAME} · {STUDIO_HOME}</span>
+        </footer>
       </main>
     </div>
   );

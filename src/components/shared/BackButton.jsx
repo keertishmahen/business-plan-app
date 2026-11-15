@@ -1,4 +1,5 @@
 import React from 'react';
+import { ArrowLeft } from 'lucide-react';
 
 /**
  * BackButton — Step-level back navigation button.
@@ -27,7 +28,7 @@ export default function BackButton({ onBack, disabled = false }) {
         flexShrink: 0,
       }}
     >
-      <span aria-hidden="true" style={{ fontSize: 14, lineHeight: 1 }}>←</span>
+      <ArrowLeft size={15} aria-hidden="true" />
       Back
     </button>
   );

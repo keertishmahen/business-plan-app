@@ -1,4 +1,5 @@
 import { memo } from "react";
+import { X, AlertTriangle } from "lucide-react";
 import { AGENT_CONFIG } from "../../constants/agents";
 import {
   collectSpecialistInsights,
@@ -47,7 +48,7 @@ export default memo(function SpecialistInsightsPanel({
             className="specialist-insights-close"
             aria-label="Close insights"
           >
-            ×
+            <X size={16} aria-hidden="true" />
           </button>
         )}
       </div>
@@ -80,7 +81,7 @@ export default memo(function SpecialistInsightsPanel({
                 className="specialist-insight-card__body specialist-insight-card__body--warn"
                 style={{ marginTop: 6 }}
               >
-                ⚠ {warning}
+                <AlertTriangle size={13} aria-hidden="true" className="icon-inline" /> {warning}
               </p>
             ))}
             {insights.length === 0 && warnings.length === 0 && sources.length > 0 && (

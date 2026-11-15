@@ -1,3 +1,4 @@
+import { FileText, Presentation, NotebookText, Info } from "lucide-react";
 import FormatCard from "./FormatCard";
 
 /**
@@ -18,21 +19,21 @@ const FORMAT_CARDS = [
   {
     id: "docx",
     format: "Word Document",
-    icon: "W",
+    Icon: FileText,
     iconColor: "#2563eb",
     description: "Full document with appendices, formatted for Microsoft Word.",
   },
   {
     id: "pptx",
     format: "PowerPoint Slides",
-    icon: "P",
+    Icon: Presentation,
     iconColor: "#ea580c",
     description: "12-slide investor pitch deck from your full business plan.",
   },
   {
     id: "md",
     format: "Notion Page",
-    icon: "N",
+    Icon: NotebookText,
     iconColor: "#1e293b",
     description: "Markdown formatted for easy import into Notion workspaces.",
   },
@@ -52,7 +53,7 @@ export default function ExportModal({ isOpen, onClose, onExport }) {
           <FormatCard
             key={card.id}
             format={card.format}
-            icon={card.icon}
+            Icon={card.Icon}
             iconColor={card.iconColor}
             description={card.description}
             onExport={() => onExport(card.id)}
@@ -62,7 +63,7 @@ export default function ExportModal({ isOpen, onClose, onExport }) {
 
       {/* Privacy reminder banner */}
       <div className="export-privacy-banner" role="status">
-        <span style={styles.privacyIcon} aria-hidden="true">ℹ️</span>
+        <span style={styles.privacyIcon} aria-hidden="true"><Info size={18} /></span>
         <span style={styles.privacyText}>
           Your data stays in your browser. Nothing is shared externally.
         </span>
@@ -108,8 +109,8 @@ const styles = {
     padding: "12px 16px",
   },
   privacyIcon: {
-    fontSize: "1.25rem",
-    lineHeight: 1,
+    display: "inline-flex",
+    color: "var(--color-text-secondary)",
     flexShrink: 0,
   },
   privacyText: {

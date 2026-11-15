@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { ArrowRight } from "lucide-react";
 import { BMC_BLOCKS, SNAKE_TO_CAMEL } from "../../constants/bmcBlocks";
 import RagKnowledgeUpload from "./RagKnowledgeUpload";
 import SixCapitalsProfile from "./SixCapitalsProfile";
@@ -67,7 +68,7 @@ function AgentChips({ agents }) {
   if (!agents?.length) return null;
   return (
     <div className="rag-item__agents" aria-label="Routed to MIA agents">
-      <span className="rag-item__agents-label">→ MIA:</span>
+      <span className="rag-item__agents-label"><ArrowRight size={12} aria-hidden="true" className="icon-inline" /> MIA:</span>
       {agents.map((a) => (
         <span key={a} className="rag-chip">{AGENT_LABELS[a] || a}</span>
       ))}
@@ -285,7 +286,7 @@ export default function RagStep({
           onClick={onApprove}
           disabled={loading || includedCount === 0}
         >
-          Use this evidence → Generate Business Plan
+          Use this evidence — Generate Business Plan <ArrowRight size={16} aria-hidden="true" />
         </button>
       </div>
     </div>

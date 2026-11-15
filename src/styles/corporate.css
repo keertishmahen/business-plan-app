@@ -468,17 +468,6 @@
   gap: 12px;
 }
 
-.glass-header__logo {
-  width: 36px;
-  height: 36px;
-  border-radius: 11px;
-  background: var(--gradient-brand);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 4px 12px rgba(46, 92, 255, 0.35);
-  flex-shrink: 0;
-}
 
 .glass-header__title {
   margin: 0;

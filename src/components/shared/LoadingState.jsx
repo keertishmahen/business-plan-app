@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { Hourglass } from "lucide-react";
+import BrandLogo from "./BrandLogo";
 
 /**
  * LoadingState — accessible loading indicator with contextual messages
@@ -6,8 +8,10 @@ import { useEffect, useState } from "react";
  *
  * @param {string} [label] - Custom loading label (overrides stepName-based label)
  * @param {string} [stepName] - Step context name for "Generating {stepName}…" message
+ * @param {boolean} [brand] - Show the Symmetra logo above the indicator (full-page states)
+ * @param {string} [hint] - Secondary line (defaults to the generation-time hint)
  */
-export default function LoadingState({ label, stepName }) {
+export default function LoadingState({ label, stepName, brand = false, hint = "This usually takes 10–30 seconds" }) {
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
 
   useEffect(() => {
@@ -26,6 +30,7 @@ export default function LoadingState({ label, stepName }) {
       aria-live="polite"
       className="loading-glass-card"
     >
+      {brand && <BrandLogo height={44} className="brand-logo--center" />}
       {prefersReducedMotion ? (
         <div
           aria-hidden="true"
@@ -33,11 +38,13 @@ export default function LoadingState({ label, stepName }) {
             width: 40,
             height: 40,
             margin: "0 auto 20px",
-            fontSize: 32,
-            lineHeight: "40px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            color: "var(--color-brand)",
           }}
         >
-          ⏳
+          <Hourglass size={28} strokeWidth={1.75} />
         </div>
       ) : (
         <div
@@ -57,7 +64,7 @@ export default function LoadingState({ label, stepName }) {
         {displayLabel}
       </p>
       <p style={{ fontSize: 12, color: "var(--color-text-muted)", marginTop: 6 }}>
-        This usually takes 10–30 seconds
+        {hint}
       </p>
     </div>
   );

@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { Check } from "lucide-react";
 import { DRIVER_STYLES } from "../../constants/steps";
 import DriverBadge, { DRIVER_ORDER } from "../shared/DriverBadge";
 import InfoTooltip from "../shared/InfoTooltip";
@@ -111,7 +112,7 @@ export default function ValuesStep({ data, dilemmasData }) {
                 </div>
                 {v.benefits.map((b, j) => (
                   <div key={j} style={{ fontSize: 13, color: "var(--color-text-secondary)", display: "flex", gap: 8, marginBottom: 5 }}>
-                    <span style={{ color: style.color, flexShrink: 0 }}>✓</span>
+                    <span style={{ color: style.color, flexShrink: 0, display: "inline-flex", paddingTop: 2 }} aria-hidden="true"><Check size={14} strokeWidth={2.5} /></span>
                     <span style={{ lineHeight: 1.5 }}>{b}</span>
                   </div>
                 ))}

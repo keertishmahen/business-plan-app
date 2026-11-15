@@ -1,6 +1,8 @@
 import { useState } from "react";
+import { Sparkles, Ban, Lock, ArrowRight } from "lucide-react";
 import { testApiKey } from "../utils/gemini";
-import { APP_NAME, APP_DESCRIPTION } from "../constants/branding";
+import { APP_DESCRIPTION } from "../constants/branding";
+import BrandLogo from "./shared/BrandLogo";
 
 /**
  * ApiKeyScreen — aurora entry screen (Design System v2).
@@ -24,17 +26,18 @@ export default function ApiKeyScreen({ onSubmit }) {
   }
 
   const features = [
-    { icon: "◈", title: "What I can do", text: "Co-create a tailored, SDG-aligned business plan step by step." },
-    { icon: "✕", title: "What I cannot do", text: "I cannot provide legal advice or guarantee market outcomes." },
-    { icon: "🔒", title: "How your data is used", text: "Your data is sent only to Gemini. Your API key is never stored." },
+    { Icon: Sparkles, title: "What I can do", text: "Co-create a tailored, SDG-aligned business plan step by step." },
+    { Icon: Ban, title: "What I cannot do", text: "I cannot provide legal advice or guarantee market outcomes." },
+    { Icon: Lock, title: "How your data is used", text: "Your data is sent only to Gemini. Your API key is never stored." },
   ];
 
   return (
     <div className="entry-screen">
       <div className="entry-card animate-fade-in-up">
         {/* Logo / brand */}
-        <div className="entry-logo" aria-hidden="true">◈</div>
-        <h1 className="entry-title">{APP_NAME}</h1>
+        <h1 className="entry-brand">
+          <BrandLogo height={56} />
+        </h1>
         <p className="entry-subtitle">
           {APP_DESCRIPTION}<br />
           In about 30 minutes, co-create a tailored, actionable plan.
@@ -44,7 +47,7 @@ export default function ApiKeyScreen({ onSubmit }) {
         <div className="entry-tiles">
           {features.map((f, i) => (
             <div key={i} className="entry-tile">
-              <div className="entry-tile__icon" aria-hidden="true">{f.icon}</div>
+              <div className="entry-tile__icon" aria-hidden="true"><f.Icon size={18} strokeWidth={2} /></div>
               <div className="entry-tile__title">{f.title}</div>
               <div className="entry-tile__text">{f.text}</div>
             </div>
@@ -117,7 +120,7 @@ export default function ApiKeyScreen({ onSubmit }) {
             disabled={loading || !key.trim()}
             style={{ width: "100%", justifyContent: "center", padding: "12px", fontSize: 15 }}
           >
-            {loading ? "Connecting…" : "Start co-creating →"}
+            {loading ? "Connecting…" : <>Start co-creating <ArrowRight size={16} aria-hidden="true" /></>}
           </button>
         </div>
       </div>

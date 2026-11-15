@@ -26,7 +26,6 @@ export const BMC_BLOCKS = {
     border: "#B5D4F4",
     text: "#0C447C",
     snakeKey: "key_partners",
-    exportEmoji: "🤝",
   },
   keyActivities: {
     label: "Key Activities",
@@ -36,7 +35,6 @@ export const BMC_BLOCKS = {
     border: "#F7C1C1",
     text: "#791F1F",
     snakeKey: "key_activities",
-    exportEmoji: "⚙️",
   },
   keyResources: {
     label: "Key Resources",
@@ -46,7 +44,6 @@ export const BMC_BLOCKS = {
     border: "#C0DD97",
     text: "#27500A",
     snakeKey: "key_resources",
-    exportEmoji: "🧰",
   },
   valuePropositions: {
     label: "Value Propositions",
@@ -56,7 +53,6 @@ export const BMC_BLOCKS = {
     border: "#FAC775",
     text: "#633806",
     snakeKey: "value_propositions",
-    exportEmoji: "💡",
   },
   customerRelationships: {
     label: "Customer Relationships",
@@ -66,7 +62,6 @@ export const BMC_BLOCKS = {
     border: "#D4A5E8",
     text: "#4A1568",
     snakeKey: "customer_relationships",
-    exportEmoji: "💬",
   },
   channels: {
     label: "Channels",
@@ -76,7 +71,6 @@ export const BMC_BLOCKS = {
     border: "#A3E4D7",
     text: "#0E6655",
     snakeKey: "channels",
-    exportEmoji: "🚚",
   },
   customerSegments: {
     label: "Customer Segments",
@@ -86,7 +80,6 @@ export const BMC_BLOCKS = {
     border: "#F5B7A1",
     text: "#6E2C00",
     snakeKey: "customer_segments",
-    exportEmoji: "👥",
   },
   revenueStreams: {
     label: "Revenue Streams",
@@ -96,7 +89,6 @@ export const BMC_BLOCKS = {
     border: "#82D9A5",
     text: "#1E6B3E",
     snakeKey: "revenue_streams",
-    exportEmoji: "💰",
   },
   costStructure: {
     label: "Cost Structure",
@@ -106,7 +98,6 @@ export const BMC_BLOCKS = {
     border: "#E8B4BD",
     text: "#6B1D2B",
     snakeKey: "cost_structure",
-    exportEmoji: "🧾",
   },
   socialEnvironmentalCost: {
     label: "Social and Environmental Cost",
@@ -116,7 +107,6 @@ export const BMC_BLOCKS = {
     border: "#C9B8B8",
     text: "#5C3D3D",
     snakeKey: "social_environmental_cost",
-    exportEmoji: "⚠️",
     impactType: "cost",
   },
   socialEnvironmentalBenefit: {
@@ -127,7 +117,6 @@ export const BMC_BLOCKS = {
     border: "#B7E9D7",
     text: "#0E8A66",
     snakeKey: "social_environmental_benefit",
-    exportEmoji: "🌱",
     impactType: "benefit",
   },
 };
@@ -183,5 +172,4 @@ export const EXPORT_BLOCK_LIST = ALL_BLOCK_IDS.map((id) => ({
   id,
   key: BMC_BLOCKS[id].snakeKey,
   label: BMC_BLOCKS[id].label,
-  emoji: BMC_BLOCKS[id].exportEmoji,
 }));

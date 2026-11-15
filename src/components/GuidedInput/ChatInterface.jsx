@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
-import { Mic, MicOff, Send } from 'lucide-react';
+import { Mic, MicOff, Send, Check, Pencil, X, ArrowRight } from 'lucide-react';
 import { RobotIcon } from '../shared/Icon';
 import useVoiceInput from '../../hooks/useVoiceInput';
 import { useDynamicQuestions } from '../../hooks/useDynamicQuestions';
@@ -254,20 +254,20 @@ export default function ChatInterface({
             <div style={layoutStyles.voiceActions}>
               {editingVoice ? (
                 <button style={layoutStyles.voiceConfirmBtn} onClick={handleVoiceConfirm}>
-                  ✓ Confirm
+                  <Check size={14} aria-hidden="true" /> Confirm
                 </button>
               ) : (
                 <>
                   <button style={layoutStyles.voiceEditBtn} onClick={handleVoiceEdit}>
-                    ✏️ Edit
+                    <Pencil size={14} aria-hidden="true" /> Edit
                   </button>
                   <button style={layoutStyles.voiceConfirmBtn} onClick={handleVoiceConfirm}>
-                    ✓ Send
+                    <Check size={14} aria-hidden="true" /> Send
                   </button>
                 </>
               )}
-              <button style={layoutStyles.voiceDismissBtn} onClick={handleVoiceDismiss}>
-                ✕
+              <button style={layoutStyles.voiceDismissBtn} onClick={handleVoiceDismiss} aria-label="Dismiss transcript">
+                <X size={14} aria-hidden="true" />
               </button>
             </div>
           </div>
@@ -298,7 +298,7 @@ export default function ChatInterface({
         {awaitingFollowUpAnswer && !isGenerating && (
           <div style={{ ...layoutStyles.messageWrapper, ...layoutStyles.aiWrapper }}>
             <button style={layoutStyles.skipButton} onClick={handleSkipFollowUp} type="button">
-              Skip →
+              Skip <ArrowRight size={14} aria-hidden="true" />
             </button>
           </div>
         )}
@@ -353,7 +353,7 @@ export default function ChatInterface({
       {/* Live transcript while recording */}
       {isListening && transcript && (
         <div style={layoutStyles.liveTranscript}>
-          <span style={{ color: '#DC2626', marginRight: 8 }}>●</span>
+          <span className="recording-dot" aria-hidden="true" />
           Listening: "{transcript}"
         </div>
       )}

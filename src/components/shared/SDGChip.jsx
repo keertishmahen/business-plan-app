@@ -37,10 +37,12 @@ export default function SDGChip({ label, onClick, sdgNumber }) {
         userSelect: "none",
       }}
     >
-      {sdgDef?.icon && (
-        <span aria-hidden="true" style={{ fontSize: 10, lineHeight: 1 }}>
-          {sdgDef.icon}
-        </span>
+      {sdgDef && (
+        // Official SDG colour swatch, in place of the old emoji.
+        <span
+          aria-hidden="true"
+          style={{ width: 8, height: 8, borderRadius: 2, background: color, flexShrink: 0 }}
+        />
       )}
       {chipText}
     </span>

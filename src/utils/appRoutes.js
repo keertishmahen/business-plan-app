@@ -1,4 +1,4 @@
-import { STEP_ORDER } from "../hooks/useWorkflow";
+import { STEP_ORDER } from "../constants/steps";
 
 export const PHASE_ONBOARDING = "onboarding";
 export const PHASE_GUIDED = "guided-input";

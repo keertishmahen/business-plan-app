@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect } from "react";
+import { CheckCircle2, CircleDashed, HelpCircle, AlertTriangle } from "lucide-react";
 import { SDG_DEFINITIONS } from "../../constants/sdgs";
 import { formatAgentText } from "../../utils/agentText";
 import InfoTooltip from "../shared/InfoTooltip";
@@ -11,7 +12,7 @@ import { TOOLTIP_CONTENT } from "../../constants/tooltips";
 
 const STATUS_CONFIG = {
   strong: {
-    symbol: "✓",
+    Icon: CheckCircle2,
     label: "Strong evidence",
     rationale: "Concrete, verifiable link to this SDG in your plan",
     color: "#22c55e",
@@ -19,7 +20,7 @@ const STATUS_CONFIG = {
     tooltipKey: "sdg-status-strong",
   },
   inferred: {
-    symbol: "~",
+    Icon: CircleDashed,
     label: "Inferred",
     rationale: "Plausible connection — review before claiming",
     color: "#eab308",
@@ -27,7 +28,7 @@ const STATUS_CONFIG = {
     tooltipKey: "sdg-status-inferred",
   },
   undecided: {
-    symbol: "?",
+    Icon: HelpCircle,
     label: "You decide",
     rationale: "Not directly addressed — you confirm or override",
     color: "#6b7280",
@@ -77,7 +78,7 @@ function StatusIcon({ status }) {
         flexShrink: 0,
       }}
     >
-      {config.symbol}
+      <config.Icon size={13} strokeWidth={2.5} aria-hidden="true" />
     </span>
   );
 }
@@ -209,7 +210,7 @@ function SDGCard({ sdg, alignment, expanded, onToggle, onStatusChange }) {
                     transition: "all 0.15s",
                   }}
                 >
-                  {cfg.symbol} {cfg.label}
+                  <cfg.Icon size={13} aria-hidden="true" className="icon-inline" /> {cfg.label}
                 </button>
               ))}
             </div>
@@ -251,7 +252,7 @@ function AntiGreenwashingPanel({
   return (
     <aside className="glass-info-card--amber side-panel" aria-label="Anti-greenwashing safeguards">
       <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 14 }}>
-        <span style={{ fontSize: 18 }} aria-hidden="true">⚠️</span>
+        <span style={{ display: "inline-flex", color: "#92400e" }} aria-hidden="true"><AlertTriangle size={18} /></span>
         <h3 style={{ fontSize: 14, fontWeight: 700, color: "#92400e", margin: 0 }}>
           Anti-Greenwashing Safeguards
         </h3>
@@ -499,7 +500,7 @@ export default function SDGMapperStep({
                 marginTop: 1,
               }}
             >
-              {cfg.symbol}
+              <cfg.Icon size={13} strokeWidth={2.5} aria-hidden="true" />
             </span>
             <div>
               <span style={{ fontSize: 12, fontWeight: 600, color: cfg.color }}>{cfg.label}</span>

@@ -1,3 +1,5 @@
+import { Check, X } from "lucide-react";
+
 /**
  * FeedbackAcknowledgment — dismissible banner displaying a plain-language
  * description of changes made after a user refinement.
@@ -45,7 +47,7 @@ export default function FeedbackAcknowledgment({ message, onDismiss }) {
           lineHeight: 1,
         }}
       >
-        ✓
+        <Check size={14} strokeWidth={3} />
       </span>
 
       {/* Change description message */}
@@ -88,7 +90,7 @@ export default function FeedbackAcknowledgment({ message, onDismiss }) {
           e.currentTarget.style.background = "transparent";
         }}
       >
-        ✕
+        <X size={16} aria-hidden="true" />
       </button>
     </div>
   );
